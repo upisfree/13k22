@@ -53,6 +53,22 @@ function add3(a, b, c) {
 
 function reflectThrough(a, normal) {
   var d = scale(normal, dotProduct(a, normal));
-  
+
   return subtract(scale(d, 2), a);
+}
+
+function invDir(a) {
+  return {
+    x: 1 / a.x,
+    y: 1 / a.y,
+    z: 1 / a.z
+  };
+}
+
+function step(edge, x) {
+  if (x < edge) {
+    return 0;
+  } else {
+    return 1;
+  }
 }

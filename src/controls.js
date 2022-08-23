@@ -13,7 +13,7 @@ function updateKeyboard() {
   for (const c in keys) {
     if (c) {
       if (c == 'KeyW') {
-        // camPosition.z += playerSpeed;
+        camPosition.z += playerSpeed;
 
         // add(
         //   camPosition,
@@ -24,17 +24,17 @@ function updateKeyboard() {
         // );
       }
 
-      // if (c == 'KeyS') {
-      //   camPos.z -= playerSpeed;
-      // }
+      if (c == 'KeyS') {
+        camPosition.z -= playerSpeed;
+      }
 
-      // if (c == 'KeyA') {
-      //   camPos.x -= playerSpeed;
-      // }
+      if (c == 'KeyA') {
+        camPosition.x -= playerSpeed;
+      }
 
-      // if (c == 'KeyD') {
-      //   camPos.x += playerSpeed;
-      // }
+      if (c == 'KeyD') {
+        camPosition.x += playerSpeed;
+      }
     }
   }
 }

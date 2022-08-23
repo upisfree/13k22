@@ -1,7 +1,12 @@
 let PI = Math.PI;
+let EPS = 0.01;
 let UP = { x: 0, y: 1, z: 0 };
 let ZERO = { x: 0, y: 0, z: 0 };
 let BACKGROUND = { x: 255, y: 255, z: 255 };
+
+// bloom?
+// global illumination?
+// https://github.com/bwiklund/js1k-love-raytracer
 
 // автоматически это циклом сделать
 let sin = Math.sin;
@@ -10,6 +15,8 @@ let tan = Math.tan;
 let sqrt = Math.sqrt;
 let min = Math.min;
 let max = Math.max;
+let abs = Math.abs;
+let sign = Math.sign;
 
 // screen bounds
 let sw = 200;
@@ -107,21 +114,37 @@ let objects = [
     radius: 0.1,
   },
   {
-    type: "sphere",
-    point: {
-      x: 0,
-      y: 0,
-      z: 0,
-    },
+    type: "box",
+    bounds: [
+      {
+        x: -2.75 + 5,
+        y: -1.75 - 2,
+        z: -2,
+      },
+      {
+        x: -1 + 5,
+        y: 0 - 2,
+        z: 1,
+      }
+    ],
+    // min: {
+    //   x: 0,
+    //   y: 0,
+    //   z: 0,
+    // },
+    // max: {
+    //   x: 2,
+    //   y: 4,
+    //   z: 3,
+    // },
     color: {
       x: 255,
-      y: 255,
+      y: 0,
       z: 255,
     },
     specular: 1,
-    lambert: 0.2,
-    ambient: 0.1,
-    radius: 1,
+    lambert: 0.5,
+    ambient: 0.2
   },
 ];
 
@@ -138,8 +161,8 @@ function loop() {
 
   updateKeyboard();
 
-  planet1 += 0.1 / 5;
-  planet2 += 0.2 / 5;
+  planet1 += 0.1 / 10;
+  planet2 += 0.2 / 10;
 
   objects[1].point.x = Math.sin(planet1) * 3.5;
   objects[1].point.z = -3 + Math.cos(planet1) * 3.5;
