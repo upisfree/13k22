@@ -1,7 +1,7 @@
 
 // rendering
 function pixel(x, y, r, g, b) {
-  let i = (y * w + x) * 4;
+  let i = (y * sw + x) * 4;
 
   buffer.data[i] = r;
   buffer.data[i + 1] = g;
@@ -11,27 +11,27 @@ function pixel(x, y, r, g, b) {
 
 function render() {
   let eyeVector = unitVector(
-    subtract(camPos, camTarget)
+    subtract(camPosition, camTarget)
   );
   let vpRight = unitVector(crossProduct(eyeVector, UP));
   let vpUp = unitVector(crossProduct(vpRight, eyeVector));
 
   let fovRadians = (PI * (fov / 2)) / 180;
-  let heightWidthRatio = h / w;
+  let heightWidthRatio = sh / sw;
   let halfWidth = tan(fovRadians);
   let halfHeight = heightWidthRatio * halfWidth;
   let cameraWidth = halfWidth * 2;
   let cameraHeight = halfHeight * 2;
-  let pixelWidth = cameraWidth / (w - 1);
-  let pixelHeight = cameraHeight / (h - 1);
+  let pixelWidth = cameraWidth / (sw - 1);
+  let pixelHeight = cameraHeight / (sh - 1);
 
   let color;
   let ray = {
-    point: camPos
+    point: camTarget
   };
 
-  for (let x = 0; x < w; x++) {
-    for (let y = 0; y < h; y++) {
+  for (let x = 0; x < sw; x++) {
+    for (let y = 0; y < sh; y++) {
       let xcomp = scale(vpRight, x * pixelWidth - halfWidth);
       let ycomp = scale(vpUp, y * pixelHeight - halfHeight);
 
@@ -67,7 +67,7 @@ function trace(ray, depth) {
 
   var dist = distObject[0],
     object = distObject[1];
-  
+
   var pointAtTime = add(ray.point, scale(ray.vector, dist));
 
   return surface(
@@ -85,7 +85,7 @@ function intersectScene(ray) {
   for (let i = 0; i < objects.length; i++) {
     let object = objects[i];
     let dist = sphereIntersection(object, ray);
-    
+
     if (dist !== undefined && dist < closest[0]) {
       closest = [dist, object];
     }
@@ -140,9 +140,9 @@ function surface(ray, object, pointAtTime, normal, depth) {
       point: pointAtTime,
       vector: reflectThrough(ray.vector, normal),
     };
-    
+
     let reflectedColor = trace(reflectedRay, ++depth);
-    
+
     if (reflectedColor) {
       c = add(c, scale(reflectedColor, object.specular));
     }
@@ -170,5 +170,5 @@ function isLightVisible(pt, light) {
 
 // это вообще нужно?
 function clear() {
-  gl.clearRect(0, 0, w, h);
+  gl.clearRect(0, 0, sw, sh);
 }

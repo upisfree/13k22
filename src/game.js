@@ -1,5 +1,5 @@
 let PI = Math.PI;
-let UP = { x: 0, y: -1, z: 0 }; // У МЕНЯ ПОЧЕМУ-ТО ПЕРЕВЁРНУТЫЙ ВВЕРХ
+let UP = { x: 0, y: 1, z: 0 };
 let ZERO = { x: 0, y: 0, z: 0 };
 let BACKGROUND = { x: 255, y: 255, z: 255 };
 
@@ -12,25 +12,25 @@ let min = Math.min;
 let max = Math.max;
 
 // screen bounds
-let w = 200;
-let h = 200;
+let sw = 200;
+let sh = 200;
 
 let canvas = document.querySelector('#canvas');
 let gl = canvas.getContext('2d');
-let buffer = gl.createImageData(w, h);
+let buffer = gl.createImageData(sw, sh);
 
 // controls
 let playerSpeed = 0.1;
 let mouseSpeed = 0.1;
 
 // camera
-let camPos = {
+let camPosition = {
   x: 0,
-  y: 5,
-  z: -13
+  y: 0,
+  z: 0
 };
 
-let camRot = {
+let camRotation = {
   x: 0,
   y: 0,
   z: 0
@@ -59,7 +59,7 @@ let objects = [
     type: "sphere",
     point: {
       x: 0,
-      y: 3.5,
+      y: 0,
       z: -3,
     },
     color: {
@@ -76,7 +76,7 @@ let objects = [
     type: "sphere",
     point: {
       x: -4,
-      y: 2,
+      y: -1,
       z: -1,
     },
     color: {
@@ -93,7 +93,7 @@ let objects = [
     type: "sphere",
     point: {
       x: -4,
-      y: 3,
+      y: 0,
       z: -1,
     },
     color: {
@@ -106,9 +106,26 @@ let objects = [
     ambient: 0.1,
     radius: 0.1,
   },
+  {
+    type: "sphere",
+    point: {
+      x: 0,
+      y: 0,
+      z: 0,
+    },
+    color: {
+      x: 255,
+      y: 255,
+      z: 255,
+    },
+    specular: 1,
+    lambert: 0.2,
+    ambient: 0.1,
+    radius: 1,
+  },
 ];
 
-resize(w, h);
+resize(sw, sh);
 // render();
 loop();
 

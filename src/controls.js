@@ -13,15 +13,15 @@ function updateKeyboard() {
   for (const c in keys) {
     if (c) {
       if (c == 'KeyW') {
-        camPos.z += playerSpeed;
+        // camPosition.z += playerSpeed;
 
-        add(
-          camPos,
-          scale(
-            crossProduct(camRot, UP),
-            playerSpeed
-          )
-        );
+        // add(
+        //   camPosition,
+        //   scale(
+        //     crossProduct(camRotation, UP),
+        //     playerSpeed
+        //   )
+        // );
       }
 
       // if (c == 'KeyS') {
@@ -48,10 +48,10 @@ document.addEventListener('mousemove', updateMouse);
 
 function updateMouse(e) {
   if (document.pointerLockElement === canvas) {
-    camRot.x += e.movementX * mouseSpeed;
-    camRot.y += e.movementY * mouseSpeed;
+    camRotation.x += e.movementX * mouseSpeed;
+    camRotation.y += e.movementY * mouseSpeed;
 
-    camTarget = scale(unitVector(camRot), 1);
+    camTarget = scale(unitVector(camRotation), 1);
 
     // camTarget.x += e.movementX * mouseSpeed;
     // camTarget.y += e.movementY * mouseSpeed;
