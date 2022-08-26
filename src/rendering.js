@@ -12,6 +12,15 @@ function render() {
   let eyeVector = unitVector(
     subtract(camPosition, camTarget)
   );
+
+  // eyeVector.z = -1;
+
+  // let eyeVector = unitVector(
+  //   -sin(camRotation.x) * cos (camRotation.y),
+  //   -sin(camRotation.x) * sin (camRotation.y),
+  //   cos(camRotation.x)
+  // );
+
   let vpRight = unitVector(crossProduct(eyeVector, UP));
   let vpUp = unitVector(crossProduct(vpRight, eyeVector));
 

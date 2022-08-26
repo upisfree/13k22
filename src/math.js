@@ -72,3 +72,17 @@ function step(edge, x) {
     return 1;
   }
 }
+
+function absVec(a) {
+  return {
+    x: abs(a.x),
+    y: abs(a.y),
+    z: abs(a.z)
+  };
+}
+
+// const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
+
+function clamp(value, to) {
+  return isFinite(to) ? Math.max(Math.min(value, to), -to) : value
+}

@@ -13,15 +13,16 @@ function updateKeyboard() {
   for (const c in keys) {
     if (c) {
       if (c == 'KeyW') {
-        camPosition.z += playerSpeed;
+        let up = { x: 1, y: 1, z: 0 };
+        let r = { x: camRotation.x, y: camRotation.y % PI / 4, z: camRotation.z };
 
-        // add(
-        //   camPosition,
-        //   scale(
-        //     crossProduct(camRotation, UP),
-        //     playerSpeed
-        //   )
-        // );
+        camPosition = add(
+          camPosition,
+          scale(
+            crossProduct(r, up),
+            playerSpeed
+          )
+        );
       }
 
       if (c == 'KeyS') {
@@ -46,16 +47,35 @@ canvas.onclick = () => {
 
 document.addEventListener('mousemove', updateMouse);
 
+function normalize(a) {
+  return a - (PI * 2) * Math.floor(a / (PI * 2));
+}
+
 function updateMouse(e) {
   if (document.pointerLockElement === canvas) {
-    camRotation.x += e.movementX * mouseSpeed;
-    camRotation.y += e.movementY * mouseSpeed;
+    let newX = -e.movementY * mouseSpeed;
+    let newY = -e.movementX * mouseSpeed;
+    
+    let xCut = PI2 - .0001; // engines may not like xRot == pi/2
 
-    camTarget = scale(unitVector(camRotation), 1);
+    let oldX = camRotation.x;
+    let oldY = camRotation.y;
 
-    // camTarget.x += e.movementX * mouseSpeed;
-    // camTarget.y += e.movementY * mouseSpeed;
+    camRotation.x = clamp(oldX + newX, xCut);
+    camRotation.y = (oldY + newY) % (PI * 2);
 
-    console.log(e.movementX, e.movementY);
+    updateCameraRotation();
   }
+}
+
+function updateCameraRotation() {
+  let { x, y } = camRotation;
+
+  let target = {
+    x: sin(y),
+    y: sin(x) * cos(y),
+    z: cos(x) * cos(y)
+  };
+
+  camTarget = add(camPosition, target);
 }

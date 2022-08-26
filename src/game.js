@@ -1,4 +1,5 @@
 let PI = Math.PI;
+let PI2 = PI / 2;
 let EPS = 0.01;
 let UP = { x: 0, y: 1, z: 0 };
 let ZERO = { x: 0, y: 0, z: 0 };
@@ -9,6 +10,7 @@ let BACKGROUND = { x: 255, y: 255, z: 255 };
 // https://github.com/bwiklund/js1k-love-raytracer
 
 // автоматически это циклом сделать
+// let { sin, cos } = Math; // или так
 let sin = Math.sin;
 let cos = Math.cos;
 let tan = Math.tan;
@@ -27,14 +29,14 @@ let gl = canvas.getContext('2d');
 let buffer = gl.createImageData(sw, sh);
 
 // controls
-let playerSpeed = 0.1;
-let mouseSpeed = 0.1;
+let playerSpeed = 1;
+let mouseSpeed = 0.01;
 
 // camera
 let camPosition = {
   x: 0,
   y: 0,
-  z: 0
+  z: 10
 };
 
 let camRotation = {
@@ -45,7 +47,7 @@ let camRotation = {
 
 let camTarget = {
   x: 0,
-  y: 1.8,
+  y: 0,
   z: 10
 };
 
@@ -146,6 +148,31 @@ let objects = [
     lambert: 0.5,
     ambient: 0.2
   },
+
+  // floor
+  // {
+  //   type: "box",
+  //   bounds: [
+  //     {
+  //       x: -50,
+  //       y: 3,
+  //       z: -50,
+  //     },
+  //     {
+  //       x: 50,
+  //       y: 3.1,
+  //       z: 50,
+  //     }
+  //   ],
+  //   color: {
+  //     x: 127,
+  //     y: 127,
+  //     z: 127,
+  //   },
+  //   specular: 0.1,
+  //   lambert: 0.5,
+  //   ambient: 0.2
+  // },
 ];
 
 resize(sw, sh);
@@ -160,6 +187,7 @@ function loop() {
   requestAnimationFrame(loop);
 
   updateKeyboard();
+  updateCameraRotation();
 
   planet1 += 0.1 / 10;
   planet2 += 0.2 / 10;
