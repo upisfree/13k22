@@ -1,7 +1,23 @@
-// ENGGINE REFACTOR THIS
+// REFACTOR THIS AND REMOVE UNNECCEARY
+
 // ======================================================================
 //  Low-level canvas access.
 // ======================================================================
+
+function getBackgroundColor() {
+  let c = Math.random() * 1; // set opacity?
+
+  // star
+  if (Math.random() > .99998) {
+    c = 150;
+  }
+
+  return [c, c, c];
+}
+
+
+
+
 
 var canvas = document.getElementById("canvas");
 var canvas_context = canvas.getContext("2d");
@@ -131,12 +147,11 @@ var camera_position = [3, 0, 1];
 var camera_rotation = [[0.7071, 0, -0.7071],
                [     0, 1,       0],
                [0.7071, 0,  0.7071]];
-var background_color = [0, 0, 0];
 var spheres = [
-  new Sphere([0, -1, 3], 1, [255, 0, 0], 500, 0.2),
-  new Sphere([2, 0, 4], 1, [0, 0, 255], 500, 0.3),
-  new Sphere([-2, 0, 4], 1, [0, 255, 0], 10, 0.4),
-  new Sphere([0, -5001, 0], 5000, [255, 255, 0], 1000, 0.5),
+  new Sphere([0, -1, 3], 1, [255, 255, 255], 500, 0.2),
+  new Sphere([2, 0, 4], 1, [122, 122, 122], 500, 0.3),
+  new Sphere([-2, 0, 4], 1, [64, 64, 64], 10, 0.4),
+  new Sphere([0, -5001, 0], 5000, [128, 128, 128], 1000, 0.5),
   new Sphere([-1, 0, -10], 1, [255, 255, 0], 1000, 0.5),
 ];
 
@@ -248,8 +263,9 @@ var ClosestIntersection = function(origin, direction, min_t, max_t) {
 // Traces a ray against the set of spheres in the scene.
 var TraceRay = function(origin, direction, min_t, max_t, depth) {
   var intersection = ClosestIntersection(origin, direction, min_t, max_t);
+  
   if (!intersection) {
-    return background_color;
+    return getBackgroundColor();
   }
 
   var closest_sphere = intersection[0];
@@ -272,88 +288,4 @@ var TraceRay = function(origin, direction, min_t, max_t, depth) {
 
   return Add(MultiplySV(1 - closest_sphere.reflective, local_color),
          MultiplySV(closest_sphere.reflective, reflected_color));
-}
-
-
-//
-// Main loop.
-//
-function render() {
-  for (var x = -canvas.width/2; x < canvas.width/2; x++) {
-    for (var y = -canvas.height/2; y < canvas.height/2; y++) {
-      var direction = CanvasToViewport([x, y])
-      direction = MultiplyMV(camera_rotation, direction);
-      var color = TraceRay(camera_position, direction, 1, Infinity, recursion_depth);
-      PutPixel(x, y, Clamp(color));
-    }
-  }
-
-  UpdateCanvas();
-}
-
-loop();
-
-function loop() {
-  requestAnimationFrame(loop);
-
-  // updateKeyboard();
-  // updateCameraRotation();
-
-  render();
-}
-
-// mouse
-canvas.onclick = () => {
-  canvas.requestPointerLock();
-};
-
-document.addEventListener('mousemove', updateMouse);
-
-let PI2 = Math.PI / 2;
-let mouseSpeed = 0.01;
-
-let camRot = {
-  x: 0,
-  y: 0
-}
-
-function updateMouse(e) {
-  if (document.pointerLockElement === canvas) {
-    let newX = e.movementX * mouseSpeed;
-    let newY = -e.movementY * mouseSpeed;
-    
-    let xCut = PI2 - .0001; // engines may not like xRot == pi/2
-
-    let oldX = camRot.x;
-    let oldY = camRot.y;
-
-    camRot.x = oldX + newX;
-    camRot.y = (oldY + newY) % (Math.PI * 2);
-
-    // camRotation.x = clamp(oldX + newX, xCut);
-    // camRotation.y = (oldY + newY) % (PI * 2);
-
-    let x = camRot.x;
-
-    // Вращение по оси Y
-    camera_rotation = [
-        [Math.cos(x), 0, Math.sin(x)],
-        [     0, 1,       0],
-        [-Math.sin(x), 0,  Math.cos(x)]
-    ];
-
-    // updateCameraRotation();
-  }
-}
-
-function updateCameraRotation() {
-  let { x, y } = camRotation;
-
-  let target = {
-    x: sin(y),
-    y: sin(x) * cos(y),
-    z: cos(x) * cos(y)
-  };
-
-  camTarget = add(camPosition, target);
 }

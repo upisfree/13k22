@@ -13,33 +13,41 @@ function updateKeyboard() {
   for (const c in keys) {
     if (c) {
       if (c == 'KeyW') {
-        let up = { x: 1, y: 1, z: 0 };
-        let r = { x: camRotation.x, y: camRotation.y % PI / 4, z: camRotation.z };
-
-        camPosition = add(
-          camPosition,
-          scale(
-            crossProduct(r, up),
-            playerSpeed
-          )
-        );
+        movePlayer([0, 0, 1]);
       }
 
       if (c == 'KeyS') {
-        camPosition.z -= playerSpeed;
+        movePlayer([0, 0, -1]);
       }
 
       if (c == 'KeyA') {
-        camPosition.x -= playerSpeed;
+        movePlayer([-1, 0, 0]);
       }
 
       if (c == 'KeyD') {
-        camPosition.x += playerSpeed;
+        movePlayer([1, 0, 0]);
       }
     }
   }
 }
 
+function movePlayer(direction) {
+  let movement = 
+    MultiplySV(
+      moveSpeed,
+      MultiplyMV(
+        camera_rotation,
+        direction
+      )
+    );
+
+  // no flying
+  movement[1] = 0;
+  
+  camera_position = Add(camera_position, movement);
+}
+
+// mouse
 // mouse
 canvas.onclick = () => {
   canvas.requestPointerLock();
@@ -47,35 +55,54 @@ canvas.onclick = () => {
 
 document.addEventListener('mousemove', updateMouse);
 
-function normalize(a) {
-  return a - (PI * 2) * Math.floor(a / (PI * 2));
-}
+// to the top, to constants
+let PI2 = Math.PI / 2;
+let mouseSpeed = 0.002;
+let moveSpeed = 0.1;
+
+let { cos, sin } = Math;
+
+const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
+
+let mouseRot = {
+  x: 0,
+  y: 0
+};
 
 function updateMouse(e) {
   if (document.pointerLockElement === canvas) {
-    let newX = -e.movementY * mouseSpeed;
-    let newY = -e.movementX * mouseSpeed;
+    let newX = e.movementX * mouseSpeed;
+    let newY = e.movementY * mouseSpeed;
     
-    let xCut = PI2 - .0001; // engines may not like xRot == pi/2
+    let yCut = PI2 - .01; // engines may not like yRot == pi/2
 
-    let oldX = camRotation.x;
-    let oldY = camRotation.y;
+    let oldX = mouseRot.x;
+    let oldY = mouseRot.y;
 
-    camRotation.x = clamp(oldX + newX, xCut);
-    camRotation.y = (oldY + newY) % (PI * 2);
+    mouseRot.x = oldX + newX;
+    mouseRot.y = clamp(oldY + newY, -yCut, yCut);
 
-    updateCameraRotation();
+    let x = mouseRot.x;
+    let y = mouseRot.y;
+
+    // // Вращение по оси X — ок отдельноо
+    // camera_rotation = [
+    //     [cos(x), 0, sin(x)],
+    //     [0, 1, 0],
+    //     [-sin(x), 0, cos(x)]
+    // ];
+    // Вращение по оси Y — ок отедльно
+    // camera_rotation = [
+    //   [1, 0, 0],
+    //   [0, cos(y), -sin(y)],
+    //   [0, sin(y), cos(y)]
+    // ];
+
+    // x y — искажения вверх вниз, но термимо
+    camera_rotation = [
+      [cos(x), 0, sin(x)],
+      [0, cos(y), -sin(y)],
+      [-sin(x), sin(y), cos(x) * cos(y)]
+    ];
   }
-}
-
-function updateCameraRotation() {
-  let { x, y } = camRotation;
-
-  let target = {
-    x: sin(y),
-    y: sin(x) * cos(y),
-    z: cos(x) * cos(y)
-  };
-
-  camTarget = add(camPosition, target);
 }
