@@ -60,8 +60,6 @@ let PI2 = Math.PI / 2;
 let mouseSpeed = 0.002;
 let moveSpeed = 0.1;
 
-let { cos, sin } = Math;
-
 const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
 
 let mouseRot = {

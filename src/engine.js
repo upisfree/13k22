@@ -16,6 +16,24 @@ function getBackgroundColor() {
 }
 
 
+// to the top, to constants
+let EPS = 0.01;
+let sin = Math.sin;
+let cos = Math.cos;
+let tan = Math.tan;
+let sqrt = Math.sqrt;
+let min = Math.min;
+let max = Math.max;
+let abs = Math.abs;
+let sign = Math.sign;
+
+function step(edge, x) {
+  if (x < edge) {
+    return 0;
+  } else {
+    return 1;
+  }
+}
 
 
 
@@ -113,6 +131,14 @@ var ReflectRay = function(v1, v2) {
   return Subtract(MultiplySV(2*DotProduct(v1, v2), v2), v1);
 }
 
+var InvertDirection = function(dir) {
+  return [
+    1 / dir[0],
+    1 / dir[1],
+    1 / dir[2]
+  ];
+}
+
 
 // ======================================================================
 //  A raytracer with diffuse and specular illumination, shadows and reflections,
@@ -123,6 +149,23 @@ var ReflectRay = function(v1, v2) {
 var Sphere = function(center, radius, color, specular, reflective) {
   this.center = center;
   this.radius = radius;
+  this.color = color;
+  this.specular = specular;
+  this.reflective = reflective;
+}
+
+var Box = function(min, max, color, specular, reflective) {
+  this.min = min;
+  this.max = max;
+
+  this.center = [
+    (max[0] - min[0]) / 2,
+    (max[1] - min[1]) / 2,
+    (max[2] - min[2]) / 2
+  ];
+
+  this.bounds = [min, max];
+
   this.color = color;
   this.specular = specular;
   this.reflective = reflective;
@@ -151,8 +194,12 @@ var spheres = [
   new Sphere([0, -1, 3], 1, [255, 255, 255], 500, 0.2),
   new Sphere([2, 0, 4], 1, [122, 122, 122], 500, 0.3),
   new Sphere([-2, 0, 4], 1, [64, 64, 64], 10, 0.4),
-  new Sphere([0, -5001, 0], 5000, [128, 128, 128], 1000, 0.5),
+  new Sphere([0, -5001, 0], 5000, [128, 128, 128], 1000, 0.5), // ground
   new Sphere([-1, 0, -10], 1, [255, 255, 0], 1000, 0.5),
+];
+
+var boxes = [
+  new Box([-2, -0.9, -2], [0, 1, 0], [255, 255, 255], 500, 0.2),
 ];
 
 var lights = [
@@ -189,6 +236,59 @@ var IntersectRaySphere = function(origin, direction, sphere) {
   return [t1, t2];
 }
 
+var IntersectRayBox = function(origin, direction, box) {
+  let tmin, tmax, tymin, tymax, tzmin, tzmax;
+  let bounds = box.bounds;
+
+  let rayInvDir = InvertDirection(direction);
+  let sign = [
+    +(rayInvDir[0] < 0),
+    +(rayInvDir[1] < 0),
+    +(rayInvDir[2] < 0)
+  ];
+
+  tmin = (bounds[sign[0]][0] - origin[0]) * rayInvDir[0];
+  tmax = (bounds[1 - sign[0]][0] - origin[0]) * rayInvDir[0];
+  tymin = (bounds[sign[1]][1] - origin[1]) * rayInvDir[1];
+  tymax = (bounds[1 - sign[1]][1] - origin[1]) * rayInvDir[1];
+
+  if ((tmin > tymax) || (tymin > tmax)) {
+    return;
+  }
+
+  if (tymin > tmin) {
+    tmin = tymin;
+  }
+
+  if (tymax < tmax) {
+    tmax = tymax;
+  }
+
+  tzmin = (bounds[sign[2]][2] - origin[2]) * rayInvDir[2];
+  tzmax = (bounds[1 - sign[2]][2] - origin[2]) * rayInvDir[2];
+
+  if ((tmin > tzmax) || (tzmin > tmax)) {
+    return;
+  }
+
+  if (tzmin > tmin) {
+    tmin = tzmin;
+  }
+
+  if (tzmax < tmax) {
+    tmax = tzmax;
+  }
+
+  if (tmin > tmax) {
+    return Infinity;
+  }
+
+  if (tmin < 0) {
+    return tmax;
+  }
+
+  return tmin;
+}
 
 var ComputeLighting = function(point, normal, view, specular) {
   var intensity = 0;
@@ -239,26 +339,60 @@ var ComputeLighting = function(point, normal, view, specular) {
 // Find the closest intersection between a ray and the spheres in the scene.
 var ClosestIntersection = function(origin, direction, min_t, max_t) {
   var closest_t = Infinity;
-  var closest_sphere = null;
+  var closest_object = null;
 
   for (var i = 0; i < spheres.length; i++) {
     var ts = IntersectRaySphere(origin, direction, spheres[i]);
+    
     if (ts[0] < closest_t && min_t < ts[0] && ts[0] < max_t) {
       closest_t = ts[0];
-      closest_sphere = spheres[i];
+      closest_object = spheres[i];
     }
+
     if (ts[1] < closest_t && min_t < ts[1] && ts[1] < max_t) {
       closest_t = ts[1];
-      closest_sphere = spheres[i];
+      closest_object = spheres[i];
     }
   }
 
-  if (closest_sphere) {
-    return [closest_sphere, closest_t];
+  for (var i = 0; i < boxes.length; i++) {
+    var ts = IntersectRayBox(origin, direction, boxes[i]);
+    
+    if (ts < closest_t && min_t < ts && ts < max_t) {
+      closest_t = ts;
+      closest_object = boxes[i];
+    }
   }
+
+
+  if (closest_object) {
+    return [closest_object, closest_t];
+  }
+
   return null;
 }
 
+var NormalSphere = function(point, sphere) {
+  var normal = Subtract(point, sphere.center);
+
+  return MultiplySV(1.0 / Length(normal), normal);
+}
+
+var NormalBox = function(point, box) {
+  let center = MultiplySV(0.5, Add(box.max, box.min));
+  let size = MultiplySV(0.5, Subtract(box.max, box.min));
+  let pc = Subtract(point, center);
+
+  let normal = [
+    sign(pc[0]) * step(abs(abs(pc[0]) - size[0]), EPS),
+    sign(pc[1]) * step(abs(abs(pc[1]) - size[1]), EPS),
+    sign(pc[2]) * step(abs(abs(pc[2]) - size[2]), EPS)
+  ];
+
+  // return unitVector(normal);
+
+  return MultiplySV(1.0 / Length(normal), normal);
+}
 
 // Traces a ray against the set of spheres in the scene.
 var TraceRay = function(origin, direction, min_t, max_t, depth) {
@@ -268,24 +402,29 @@ var TraceRay = function(origin, direction, min_t, max_t, depth) {
     return getBackgroundColor();
   }
 
-  var closest_sphere = intersection[0];
+  var closest_object = intersection[0];
   var closest_t = intersection[1];
 
   var point = Add(origin, MultiplySV(closest_t, direction));
-  var normal = Subtract(point, closest_sphere.center);
-  normal = MultiplySV(1.0 / Length(normal), normal);
+
+  var normal;
+  if (closest_object instanceof Sphere) {
+    normal = NormalSphere(point, closest_object);
+  } else if (closest_object instanceof Box) {
+    normal = NormalBox(point, closest_object);
+  }
 
   var view = MultiplySV(-1, direction);
-  var lighting = ComputeLighting(point, normal, view, closest_sphere.specular);
-  var local_color = MultiplySV(lighting, closest_sphere.color);
+  var lighting = ComputeLighting(point, normal, view, closest_object.specular);
+  var local_color = MultiplySV(lighting, closest_object.color);
 
-  if (closest_sphere.reflective <= 0 || depth <= 0) {
+  if (closest_object.reflective <= 0 || depth <= 0) {
     return local_color;
   }
 
   var reflected_ray = ReflectRay(view, normal);
   var reflected_color = TraceRay(point, reflected_ray, EPSILON, Infinity, depth - 1);
 
-  return Add(MultiplySV(1 - closest_sphere.reflective, local_color),
-         MultiplySV(closest_sphere.reflective, reflected_color));
+  return Add(MultiplySV(1 - closest_object.reflective, local_color),
+         MultiplySV(closest_object.reflective, reflected_color));
 }
