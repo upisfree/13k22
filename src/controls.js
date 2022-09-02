@@ -45,6 +45,12 @@ function movePlayer(direction) {
   movement[1] = 0;
   
   camera_position = Add(camera_position, movement);
+  camera_position[1] += cos(Date.now() / 100) / 100;
+  
+  // возвращаем в ноль постепенно, если зашли слишком далеко
+  if (abs(camera_position[1]) > 0.1) {
+    camera_position[1] *= 0.0001;
+  }
   
   playerBox.movePlayer(camera_position);
 }
