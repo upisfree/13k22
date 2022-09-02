@@ -16,25 +16,6 @@ function getBackgroundColor() {
 }
 
 
-// to the top, to constants
-let EPS = 0.01;
-let sin = Math.sin;
-let cos = Math.cos;
-let tan = Math.tan;
-let sqrt = Math.sqrt;
-let min = Math.min;
-let max = Math.max;
-let abs = Math.abs;
-let sign = Math.sign;
-
-function step(edge, x) {
-  if (x < edge) {
-    return 0;
-  } else {
-    return 1;
-  }
-}
-
 
 
 var canvas = document.getElementById("canvas");
@@ -66,148 +47,12 @@ var UpdateCanvas = function() {
 }
 
 
-// ======================================================================
-//  Linear algebra and helpers.
-// ======================================================================
-
-// Conceptually, an "infinitesimaly small" real number.
-var EPSILON = 0.001;
-
-
-// Dot product of two 3D vectors.
-var DotProduct = function(v1, v2) {
-  return v1[0]*v2[0] + v1[1]*v2[1] + v1[2]*v2[2];
-}
-
-
-// Length of a 3D vector.
-var Length = function(vec) {
-  return Math.sqrt(DotProduct(vec, vec));
-}
-
-
-// Multiplies a scalar and a vector.
-var MultiplySV = function(k, vec) {
-  return [k*vec[0], k*vec[1], k*vec[2]];
-}
-
-
-// Multiplies a matrix and a vector.
-var MultiplyMV = function(mat, vec) {
-  var result = [0, 0, 0];
-
-  for (var i = 0; i < 3; i++) {
-    for (var j = 0; j < 3; j++) {
-      result[i] += vec[j]*mat[i][j];
-    }
-  }
-
-  return result;
-}
-
-
-// Computes v1 + v2.
-var Add = function(v1, v2) {
-  return [v1[0] + v2[0], v1[1] + v2[1], v1[2] + v2[2]];
-}
-
-
-// Computes v1 - v2.
-var Subtract = function(v1, v2) {
-  return [v1[0] - v2[0], v1[1] - v2[1], v1[2] - v2[2]];
-}
-
-
-// Clamps a color to the canonical color range.
-var Clamp = function(vec) {
-  return [Math.min(255, Math.max(0, vec[0])),
-      Math.min(255, Math.max(0, vec[1])),
-      Math.min(255, Math.max(0, vec[2]))];
-}
-
-
-// Computes the reflection of v1 respect to v2.
-var ReflectRay = function(v1, v2) {
-  return Subtract(MultiplySV(2*DotProduct(v1, v2), v2), v1);
-}
-
-var InvertDirection = function(dir) {
-  return [
-    1 / dir[0],
-    1 / dir[1],
-    1 / dir[2]
-  ];
-}
 
 
 // ======================================================================
 //  A raytracer with diffuse and specular illumination, shadows and reflections,
 // arbitrary camera position and orientation.
 // ======================================================================
-
-// A Sphere.
-var Sphere = function(center, radius, color, specular, reflective) {
-  this.center = center;
-  this.radius = radius;
-  this.color = color;
-  this.specular = specular;
-  this.reflective = reflective;
-}
-
-var Box = function(min, max, color, specular, reflective) {
-  this.min = min;
-  this.max = max;
-
-  this.center = [
-    (max[0] - min[0]) / 2,
-    (max[1] - min[1]) / 2,
-    (max[2] - min[2]) / 2
-  ];
-
-  this.bounds = [min, max];
-
-  this.color = color;
-  this.specular = specular;
-  this.reflective = reflective;
-}
-
-// A Light.
-var Light = function(ltype, intensity, position) {
-  this.ltype = ltype;
-  this.intensity = intensity;
-  this.position = position;
-}
-
-Light.AMBIENT = 0;
-Light.POINT = 1;
-Light.DIRECTIONAL = 2;
-
-
-// Scene setup.
-var viewport_size = 1;
-var projection_plane_z = 1;
-var camera_position = [3, 0, 1];
-var camera_rotation = [[0.7071, 0, -0.7071],
-               [     0, 1,       0],
-               [0.7071, 0,  0.7071]];
-var spheres = [
-  new Sphere([0, -1, 3], 1, [255, 255, 255], 500, 0.2),
-  new Sphere([2, 0, 4], 1, [122, 122, 122], 500, 0.3),
-  new Sphere([-2, 0, 4], 1, [64, 64, 64], 10, 0.4),
-  new Sphere([0, -5001, 0], 5000, [128, 128, 128], 1000, 0.5), // ground
-  new Sphere([-1, 0, -10], 1, [255, 255, 0], 1000, 0.5),
-];
-
-var boxes = [
-  new Box([-2, -0.9, -2], [0, 1, 0], [255, 255, 255], 500, 0.2),
-];
-
-var lights = [
-  new Light(Light.AMBIENT, 0.2),
-  new Light(Light.POINT, 0.6, [2, 1, 0]),
-  new Light(Light.DIRECTIONAL, 0.2, [1, 4, 4])
-];
-var recursion_depth = 3;
 
 // Converts 2D canvas coordinates to 3D viewport coordinates.
 var CanvasToViewport = function(p2d) {
@@ -379,19 +224,51 @@ var NormalSphere = function(point, sphere) {
 }
 
 var NormalBox = function(point, box) {
-  let center = MultiplySV(0.5, Add(box.max, box.min));
-  let size = MultiplySV(0.5, Subtract(box.max, box.min));
-  let pc = Subtract(point, center);
+  let pc = Subtract(point, box.center);
 
   let normal = [
-    sign(pc[0]) * step(abs(abs(pc[0]) - size[0]), EPS),
-    sign(pc[1]) * step(abs(abs(pc[1]) - size[1]), EPS),
-    sign(pc[2]) * step(abs(abs(pc[2]) - size[2]), EPS)
+    sign(pc[0]) * step(abs(abs(pc[0]) - box.normalSize[0]), EPS),
+    sign(pc[1]) * step(abs(abs(pc[1]) - box.normalSize[1]), EPS),
+    sign(pc[2]) * step(abs(abs(pc[2]) - box.normalSize[2]), EPS)
   ];
 
-  // return unitVector(normal);
-
   return MultiplySV(1.0 / Length(normal), normal);
+}
+
+// box version
+var GetColorFromMap = function(box, point, normal) {
+  let { data, width, height } = box.map; // ImageData
+
+  let size = box.mapSize;
+
+  // uv
+  let u = (box.max[0] - point[0]) / size[0];
+
+  // другая сторона куба
+  if (normal[0] !== 0) {
+    u = (box.max[2] - point[2]) / size[2];
+  }
+
+  let v = (box.max[1] - point[1]) / size[1];
+
+  // низ куба
+  if (normal[1] !== 0) {
+    v = (box.max[2] - point[2]) / size[2];
+  }
+
+  // xy in texture space
+  let x = round((u) * width);
+  let y = round((v) * height);
+
+  let i = (y * (width * 4)) + (x * 4);
+
+  let color = [
+    data[i],
+    data[i + 1],
+    data[i + 2]
+  ];
+
+  return color;
 }
 
 // Traces a ray against the set of spheres in the scene.
@@ -416,7 +293,15 @@ var TraceRay = function(origin, direction, min_t, max_t, depth) {
 
   var view = MultiplySV(-1, direction);
   var lighting = ComputeLighting(point, normal, view, closest_object.specular);
-  var local_color = MultiplySV(lighting, closest_object.color);
+  var local_color;
+  
+  if (closest_object instanceof Box && closest_object.map) {
+    let color = GetColorFromMap(closest_object, point, normal);
+
+    local_color = MultiplySV(lighting, color);
+  } else {
+    local_color = MultiplySV(lighting, closest_object.color);
+  }
 
   if (closest_object.reflective <= 0 || depth <= 0) {
     return local_color;

@@ -45,6 +45,8 @@ function movePlayer(direction) {
   movement[1] = 0;
   
   camera_position = Add(camera_position, movement);
+  
+  playerBox.movePlayer(camera_position);
 }
 
 // mouse
@@ -56,11 +58,8 @@ canvas.onclick = () => {
 document.addEventListener('mousemove', updateMouse);
 
 // to the top, to constants
-let PI2 = Math.PI / 2;
 let mouseSpeed = 0.002;
 let moveSpeed = 0.1;
-
-const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
 
 let mouseRot = {
   x: 0,
