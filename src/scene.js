@@ -7,7 +7,7 @@ var Sphere = function(center, radius, color, specular, reflective) {
   this.reflective = reflective;
 }
 
-var Box = function(min, max, color, map, specular, reflective) {
+var Box = function(min, max, color, map, specular, reflective, onPickup) {
   this.min = min;
   this.max = max;
 
@@ -17,6 +17,7 @@ var Box = function(min, max, color, map, specular, reflective) {
   this.map = map;
   this.specular = specular;
   this.reflective = reflective;
+  this.onPickup = onPickup;
 
   // если я соберусь обновлять bounds, min, max коробки, то надо обновить следующие свойства:
   // move() сделать надо тогда
@@ -111,7 +112,8 @@ var boxes = [
   new Box([-5000, -2, -5000], [5000, -1, 5000], [255, 255, 255], null, 1000, 0), // ground
   new Box([-2, -0.9, -2], [0, 1, 0], [255, 0, 0], textureBuffer, 500, 0.1),
   new Box([4, -0.9, 4], [6, 1, 6], [255, 255, 255], textureBuffer, 500, 1), // mirror
-  playerBox
+  playerBox,
+  new Box([2, -0.5, 2], [2.25, -0.3, 2.25], [255, 0, 0], null, 500, 0, () => { console.log('on pickup action'); }), // item
 ];
 
 var lights = [

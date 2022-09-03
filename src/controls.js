@@ -55,6 +55,12 @@ function movePlayer(direction) {
 
     // x collision
     if (isCollision(a, b)) {
+      if (box.onPickup) {
+        box.onPickup();
+
+        return;
+      }
+
       if (b.max[0] > a.min[0] + movement[0] && b.min[0] < a.max[0] + movement[0]) {
         movement[0] = 0;
       }
