@@ -1,12 +1,3 @@
-// A Sphere.
-var Sphere = function(center, radius, color, specular, reflective) {
-  this.center = center;
-  this.radius = radius;
-  this.color = color;
-  this.specular = specular;
-  this.reflective = reflective;
-}
-
 var Box = function(min, max, color, map, specular, reflective, onPickup) {
   this.min = min;
   this.max = max;
@@ -95,16 +86,6 @@ loadImage('avatar.png',
 );
 
 
-
-
-
-var spheres = [
-  new Sphere([0, -1, 3], 1, [255, 255, 255], 500, 0.2),
-  new Sphere([2, 0, 4], 1, [122, 122, 122], 500, 0.3),
-  new Sphere([-2, 0, 4], 1, [64, 64, 64], 10, 0.4),
-  // new Sphere([0, -5001, 0], 5000, [128, 128, 128], 1000, 0.5), // ground
-  new Sphere([-1, 0, -10], 1, [255, 255, 0], 1000, 0.5),
-];
 
 let playerBox = new Box([0, -0.9, 0], [1, 1, 1], [0, 0, 0], textureBuffer, 500, 0);
 

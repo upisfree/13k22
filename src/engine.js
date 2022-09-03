@@ -61,26 +61,6 @@ var CanvasToViewport = function(p2d) {
       projection_plane_z];
 }
 
-
-// Computes the intersection of a ray and a sphere. Returns the values
-// of t for the intersections.
-var IntersectRaySphere = function(origin, direction, sphere) {
-  var oc = Subtract(origin, sphere.center);
-
-  var k1 = DotProduct(direction, direction);
-  var k2 = 2*DotProduct(oc, direction);
-  var k3 = DotProduct(oc, oc) - sphere.radius*sphere.radius;
-
-  var discriminant = k2*k2 - 4*k1*k3;
-  if (discriminant < 0) {
-    return [Infinity, Infinity];
-  }
-
-  var t1 = (-k2 + Math.sqrt(discriminant)) / (2*k1);
-  var t2 = (-k2 - Math.sqrt(discriminant)) / (2*k1);
-  return [t1, t2];
-}
-
 var IntersectRayBox = function(origin, direction, box) {
   let tmin, tmax, tymin, tymax, tzmin, tzmax;
   let bounds = box.bounds;
@@ -186,20 +166,6 @@ var ClosestIntersection = function(origin, direction, min_t, max_t) {
   var closest_t = Infinity;
   var closest_object = null;
 
-  for (var i = 0; i < spheres.length; i++) {
-    var ts = IntersectRaySphere(origin, direction, spheres[i]);
-    
-    if (ts[0] < closest_t && min_t < ts[0] && ts[0] < max_t) {
-      closest_t = ts[0];
-      closest_object = spheres[i];
-    }
-
-    if (ts[1] < closest_t && min_t < ts[1] && ts[1] < max_t) {
-      closest_t = ts[1];
-      closest_object = spheres[i];
-    }
-  }
-
   for (var i = 0; i < boxes.length; i++) {
     var ts = IntersectRayBox(origin, direction, boxes[i]);
     
@@ -215,12 +181,6 @@ var ClosestIntersection = function(origin, direction, min_t, max_t) {
   }
 
   return null;
-}
-
-var NormalSphere = function(point, sphere) {
-  var normal = Subtract(point, sphere.center);
-
-  return MultiplySV(1.0 / Length(normal), normal);
 }
 
 var NormalBox = function(point, box) {
@@ -285,9 +245,7 @@ var TraceRay = function(origin, direction, min_t, max_t, depth) {
   var point = Add(origin, MultiplySV(closest_t, direction));
 
   var normal;
-  if (closest_object instanceof Sphere) {
-    normal = NormalSphere(point, closest_object);
-  } else if (closest_object instanceof Box) {
+  if (closest_object instanceof Box) {
     normal = NormalBox(point, closest_object);
   }
 
