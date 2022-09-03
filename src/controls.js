@@ -43,8 +43,32 @@ function movePlayer(direction) {
 
   // no flying
   movement[1] = 0;
-  
+
+  // collision check
+  boxes.forEach(box => {
+    if (box === playerBox) {
+      return;
+    }
+
+    let a = playerBox;
+    let b = box;
+
+    // x collision
+    if (isCollision(a, b)) {
+      if (b.max[0] > a.min[0] + movement[0] && b.min[0] < a.max[0] + movement[0]) {
+        movement[0] = 0;
+      }
+
+      // z collision
+      if (b.max[2] > a.min[2] + movement[2] && b.min[2] < a.max[2] + movement[2]) {
+        movement[2] = 0;
+      }
+    }
+  });
+
   camera_position = Add(camera_position, movement);
+  
+  // покачивание камеры при хотьбе
   camera_position[1] += cos(Date.now() / 100) / 100;
   
   // возвращаем в ноль постепенно, если зашли слишком далеко

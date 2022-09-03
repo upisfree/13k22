@@ -105,11 +105,11 @@ var spheres = [
   new Sphere([-1, 0, -10], 1, [255, 255, 0], 1000, 0.5),
 ];
 
-let playerBox = new Box([0, -0.9, 0], [1, 1, 1], [255, 255, 255], textureBuffer, 500, 0);
+let playerBox = new Box([0, -0.9, 0], [1, 1, 1], [0, 0, 0], textureBuffer, 500, 0);
 
 var boxes = [
   new Box([-5000, -2, -5000], [5000, -1, 5000], [255, 255, 255], null, 1000, 0), // ground
-  new Box([-2, -0.9, -2], [0, 1, 0], [255, 255, 255], textureBuffer, 500, 0.1),
+  new Box([-2, -0.9, -2], [0, 1, 0], [255, 0, 0], textureBuffer, 500, 0.1),
   new Box([4, -0.9, 4], [6, 1, 6], [255, 255, 255], textureBuffer, 500, 1), // mirror
   playerBox
 ];

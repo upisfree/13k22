@@ -14,6 +14,9 @@ function render() {
   UpdateCanvas();
 }
 
+// если луч занимает слишком много, то просто отбрасывать его — это и будут артифакты и ускорение  вычислений
+
+
 function loop() {
   requestAnimationFrame(loop);
 

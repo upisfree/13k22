@@ -297,7 +297,7 @@ var TraceRay = function(origin, direction, min_t, max_t, depth) {
   
   if (closest_object instanceof Box && closest_object.map) {
     let color = GetColorFromMap(closest_object, point, normal);
-
+    color = Add(color, closest_object.color);
     local_color = MultiplySV(lighting, color);
   } else {
     local_color = MultiplySV(lighting, closest_object.color);
