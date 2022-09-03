@@ -1,4 +1,4 @@
-var Box = function(min, max, color, map, specular, reflective, onPickup) {
+var Box = function(min, max, color, map, specular, reflective, collider = true, onPickup = null) {
   this.min = min;
   this.max = max;
 
@@ -8,6 +8,7 @@ var Box = function(min, max, color, map, specular, reflective, onPickup) {
   this.map = map;
   this.specular = specular;
   this.reflective = reflective;
+  this.collider = collider;
   this.onPickup = onPickup;
 
   // если я соберусь обновлять bounds, min, max коробки, то надо обновить следующие свойства:
@@ -21,6 +22,12 @@ Box.prototype.update = function() {
   this.center = MultiplySV(0.5, Add(this.max, this.min));
   this.normalSize = MultiplySV(0.5, Subtract(this.max, this.min));
   this.mapSize = Subtract(this.max, this.min);
+
+  let col = [0.35, 0.35, 0.35];
+
+  // collisionMin, collisionMax
+  this.cmin = Subtract(this.min, col);
+  this.cmax = Add(this.max, col);
 };
 
 // только для игрока? запомниать первоначальные bounds коробки?
@@ -87,14 +94,14 @@ loadImage('avatar.png',
 
 
 
-let playerBox = new Box([0, -0.9, 0], [1, 1, 1], [0, 0, 0], textureBuffer, 500, 0);
+let playerBox = new Box([0, -0.9, 0], [1, 1, 1], [0, 0, 0], textureBuffer, 500, 0, false);
 
 var boxes = [
-  new Box([-5000, -2, -5000], [5000, -1, 5000], [255, 255, 255], null, 1000, 0), // ground
+  new Box([-5000, -2, -5000], [5000, -1, 5000], [255, 255, 255], null, 1000, 0, false), // ground
   new Box([-2, -0.9, -2], [0, 1, 0], [255, 0, 0], textureBuffer, 500, 0.1),
   new Box([4, -0.9, 4], [6, 1, 6], [255, 255, 255], textureBuffer, 500, 1), // mirror
   playerBox,
-  new Box([2, -0.5, 2], [2.25, -0.3, 2.25], [255, 0, 0], null, 500, 0, () => { console.log('on pickup action'); }), // item
+  new Box([2, -0.5, 2], [2.25, -0.3, 2.25], [255, 0, 0], null, 500, 0, false, () => { console.log('on pickup action'); }), // item
 ];
 
 var lights = [
@@ -102,6 +109,12 @@ var lights = [
   new Light(Light.POINT, 0.6, [2, 1, 0]),
   new Light(Light.DIRECTIONAL, 0.2, [1, 4, 4])
 ];
+
+// for (var i = 0; i < 5; i++) {
+//   lights.push(
+//     new Light(Light.POINT, Math.random(), [20 * Math.random(), 20 * Math.random(), 20 * Math.random()])
+//   );
+// }
 
 // Scene setup.
 var viewport_size = 1;

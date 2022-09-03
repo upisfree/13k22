@@ -46,7 +46,7 @@ function movePlayer(direction) {
 
   // collision check
   boxes.forEach(box => {
-    if (box === playerBox) {
+    if (!box.collider) {
       return;
     }
 
@@ -58,15 +58,17 @@ function movePlayer(direction) {
       if (box.onPickup) {
         box.onPickup();
 
-        return;
+        if (!box.collider) {
+          return;          
+        }
       }
 
-      if (b.max[0] > a.min[0] + movement[0] && b.min[0] < a.max[0] + movement[0]) {
+      if (b.cmax[0] > a.cmin[0] + movement[0] && b.cmin[0] < a.cmax[0] + movement[0]) {
         movement[0] = 0;
       }
 
       // z collision
-      if (b.max[2] > a.min[2] + movement[2] && b.min[2] < a.max[2] + movement[2]) {
+      if (b.cmax[2] > a.cmin[2] + movement[2] && b.cmin[2] < a.cmax[2] + movement[2]) {
         movement[2] = 0;
       }
     }
