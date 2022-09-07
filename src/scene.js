@@ -53,7 +53,7 @@ Light.DIRECTIONAL = 2;
 
 
 
-
+/** @deprecated */
 function loadImage(url, callback) {
   let img = new Image();
   img.src = url;
@@ -85,43 +85,9 @@ loadImage('avatar.png',
 // loadImage('uv-grid-opengl.jpg',
   (img) => {
     textureBuffer = getRawTexture(img);
-    boxes[1].map = textureBuffer;
+    // boxes[1].map = textureBuffer;
     playerBox.map = textureBuffer;
 
     console.log(textureBuffer);
   }
 );
-
-
-
-let playerBox = new Box([0, -0.9, 0], [1, 1, 1], [0, 0, 0], textureBuffer, 500, 0, false);
-
-var boxes = [
-  new Box([-5000, -2, -5000], [5000, -1, 5000], [255, 255, 255], null, 1000, 0, false), // ground
-  new Box([-2, -0.9, -2], [0, 1, 0], [255, 0, 0], textureBuffer, 500, 0.1),
-  new Box([4, -0.9, 4], [6, 1, 6], [255, 255, 255], textureBuffer, 500, 1), // mirror
-  playerBox,
-  new Box([2, -0.5, 2], [2.25, -0.3, 2.25], [255, 0, 0], null, 500, 0, false, () => { console.log('on pickup action'); }), // item
-];
-
-var lights = [
-  new Light(Light.AMBIENT, 0.2),
-  new Light(Light.POINT, 0.6, [2, 1, 0]),
-  new Light(Light.DIRECTIONAL, 0.2, [1, 4, 4])
-];
-
-// for (var i = 0; i < 5; i++) {
-//   lights.push(
-//     new Light(Light.POINT, Math.random(), [20 * Math.random(), 20 * Math.random(), 20 * Math.random()])
-//   );
-// }
-
-// Scene setup.
-var viewport_size = 1;
-var projection_plane_z = 1;
-var camera_position = [3, 0, 1];
-var camera_rotation = [[0.7071, 0, -0.7071],
-               [     0, 1,       0],
-               [0.7071, 0,  0.7071]];
-
-var recursion_depth = 3;

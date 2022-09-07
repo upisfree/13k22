@@ -93,3 +93,11 @@ var InvertDirection = function(dir) {
     1 / dir[2]
   ];
 }
+
+var DistanceBetween = function(v1, v2) {
+  var dx = v1[0] - v2[0];
+  var dy = v1[1] - v2[1];
+  var dz = v1[2] - v2[2];
+
+  return Math.sqrt( dx * dx + dy * dy + dz * dz );
+}

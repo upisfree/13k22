@@ -5,14 +5,12 @@
 // ======================================================================
 
 function getBackgroundColor() {
-  let c = Math.random() * 1; // set opacity?
-
   // star
   if (Math.random() > .99998) {
-    c = 150;
+    return [0, 0, 0];
   }
 
-  return [c, c, c];
+  return fogColor;
 }
 
 
@@ -33,7 +31,7 @@ var PutPixel = function(x, y, color) {
     return;
   }
 
-  var offset = 4*x + canvas_pitch*y;
+  var offset = 4 * x + canvas_pitch * y;
   canvas_buffer.data[offset++] = color[0];
   canvas_buffer.data[offset++] = color[1];
   canvas_buffer.data[offset++] = color[2];
@@ -122,37 +120,39 @@ var ComputeLighting = function(point, normal, view, specular) {
 
   for (var i = 0; i < lights.length; i++) {
     var light = lights[i];
+
     if (light.ltype == Light.AMBIENT) {
       intensity += light.intensity;
     } else {
       var vec_l, t_max;
+
       if (light.ltype == Light.POINT) {
-    vec_l = Subtract(light.position, point);
-    t_max = 1.0;
+        vec_l = Subtract(light.position, point);
+        t_max = 1.0;
       } else {  // Light.DIRECTIONAL
-    vec_l = light.position;
-    t_max = Infinity;
+        vec_l = light.position;
+        t_max = Infinity;
       }
 
       // Shadow check.
       var blocker = ClosestIntersection(point, vec_l, EPSILON, t_max);
       if (blocker) {
-    continue;
+        continue;
       }
 
       // Diffuse reflection.
       var n_dot_l = DotProduct(normal, vec_l);
       if (n_dot_l > 0) {
-    intensity += light.intensity * n_dot_l / (length_n * Length(vec_l));
+        intensity += light.intensity * n_dot_l / (length_n * Length(vec_l));
       }
 
       // Specular reflection.
       if (specular != -1) {
-    var vec_r = ReflectRay(vec_l, normal);
-    var r_dot_v = DotProduct(vec_r, view);
-    if (r_dot_v > 0) {
-      intensity += light.intensity * Math.pow(r_dot_v / (Length(vec_r) * length_v), specular);
-    }
+        var vec_r = ReflectRay(vec_l, normal);
+        var r_dot_v = DotProduct(vec_r, view);
+        if (r_dot_v > 0) {
+          intensity += light.intensity * Math.pow(r_dot_v / (Length(vec_r) * length_v), specular);
+        }
       }
     }
   }
@@ -266,8 +266,30 @@ var TraceRay = function(origin, direction, min_t, max_t, depth) {
   }
 
   var reflected_ray = ReflectRay(view, normal);
-  var reflected_color = TraceRay(point, reflected_ray, EPSILON, Infinity, depth - 1);
+  // EPS = 0.01
+  // EPSILON? 0.001
+  var reflected_color = TraceRay(point, reflected_ray, EPS, maxRenderDistance, depth - 1);
 
-  return Add(MultiplySV(1 - closest_object.reflective, local_color),
-         MultiplySV(closest_object.reflective, reflected_color));
+  var outColor = Add(
+    MultiplySV(
+      1 - closest_object.reflective,
+      local_color
+    ),
+    MultiplySV(
+      closest_object.reflective,
+      reflected_color
+    )
+  );
+
+  // let distance = DistanceBetween(origin, camera_position);
+  // let fogCoef = distance / max_t;
+  let fogCoef = closest_t / max_t;
+
+  var fog = [
+    fogColor[0] * fogCoef,
+    fogColor[1] * fogCoef,
+    fogColor[2] * fogCoef
+  ];
+
+  return Add(fog, outColor);
 }

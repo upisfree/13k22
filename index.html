@@ -17,6 +17,10 @@ canvas {
   width: min(100vw, 100vh);
   height: min(100vw, 100vh);
   image-rendering: pixelated;
+
+  /* font antialiasing */
+  font-smooth: never;
+  -webkit-font-smoothing: none;
 }
     </style>
 
@@ -26,6 +30,7 @@ canvas {
     <script src="./src/physics.js"></script>
     <script src="./src/scene.js"></script>
     <script src="./src/engine.js"></script>
+    <script src="./src/ui.js"></script>
     <script src="./src/controls.js"></script>
     <script src="./src/sound.js"></script>
     <script src="./src/game.js"></script>

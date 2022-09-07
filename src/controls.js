@@ -85,6 +85,8 @@ function movePlayer(direction) {
   }
   
   playerBox.movePlayer(camera_position);
+
+  playerLight.position = Add(camera_position, [0, 0, 1]);
 }
 
 // mouse
