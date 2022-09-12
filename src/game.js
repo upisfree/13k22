@@ -4,7 +4,7 @@
 function render() {
   for (var x = -canvas.width/2; x < canvas.width/2; x++) {
     for (var y = -canvas.height/2; y < canvas.height/2; y++) {
-      if (Math.random() > 0.5) {
+      if (Math.random() < 0.5) {
         continue;
       }
 
@@ -25,6 +25,8 @@ function loop() {
 
   updateKeyboard();
 
+  updateProjectiles();
+
   // а зачем много
   if (Date.now() % 2 === 0) {
     render();
@@ -41,7 +43,7 @@ function loop() {
 //
 // ты подбираешь события из жизни, они добавляют или отнимают от твоего отмеренного времени
 // (свадьба дочери, поход в бар, поездка на море, смерть матери, что-то простое)
-// 
+//
 // яркость постепенно гаснет (с почти белого начинается)
 // ты сначала низкий, в 18 высокий, потом постепенно уменьшаешься
 // ты несёшь перед собой свет, который тоже гаснет??
@@ -49,20 +51,23 @@ function loop() {
 // генерируется коридор
 
 let playerBox = new Box([0, -0.9, 0], [1, 1, 1], [0, 0, 0], textureBuffer, 500, 0, false);
-let playerLight = new Light(Light.POINT, 0.6, [0, 0, 1.2]);
+let playerLight1 = new Light(Light.POINT, 0.6, [0, 0, 1.2]);
+let playerLight2 = new Light(Light.POINT, 0.6, [0, 0, -1.2]);
 
 var boxes = [
   new Box([-5000, -2, -5000], [5000, -1, 5000], [255, 255, 255], null, 1000, 0.1, false), // ground
-  // new Box([-2, -0.9, -2], [0, 1, 0], [255, 0, 0], textureBuffer, 500, 0.1),
-  // new Box([4, -0.9, 4], [6, 1, 6], [255, 255, 255], textureBuffer, 500, 1), // mirror
   playerBox,
-  new Box([0, -0.5, 2], [0.25, -0.3, 2.25], [255, 0, 0], null, 500, 0, false, () => { console.log('on pickup action'); }), // item
+  new Box([0 + 1, -0.5, 2], [0.25 + 1, -0.3, 2.25], [255, 0, 0], null, 500, 0, false, () => { console.log('on pickup action'); }), // item
 ];
+
+var walls = [];
+let wallSize = 2;
 
 var lights = [
   new Light(Light.AMBIENT, 0.2),
-  playerLight,
-  // new Light(Light.DIRECTIONAL, 0.2, [1, 4, 4])
+  playerLight1,
+  // playerLight2,
+  new Light(Light.DIRECTIONAL, 0.5, [-5, 10, -5])
 ];
 
 // Scene setup.
@@ -79,45 +84,11 @@ var maxRenderDistance = 50;
 
 var fogColor = [220, 220, 220];
 
+generateMap();
+
 loop();
 
 
-function generateMap() {
-  let depth = 100; 
-
-  проверка, чтобы без теней стены?
-
-  // левая стена
-  for (var i = 0; i < depth / 2; i++) {
-    boxes.push(
-      new Box(
-        [-4, -1, i * 2],
-        [-2, 1, i * 2 + 2],
-        [255 * Math.random(), 255 * Math.random(), 255 * Math.random()],
-        null,
-        2000 * Math.random(),
-        Math.random()
-      )
-    );
-  }
-
-  // правая стена
-  for (var i = 0; i < depth / 2; i++) {
-    boxes.push(
-      new Box(
-        [2, -1, i * 2],
-        [4, 1, i * 2 + 2],
-        [255 * Math.random(), 255 * Math.random(), 255 * Math.random()],
-        null,
-        2000 * Math.random(),
-        Math.random()
-      )
-    );
-  }
-}
-
-
-generateMap();
 
 
 

@@ -21,12 +21,17 @@ Box.prototype.update = function() {
 
   this.center = MultiplySV(0.5, Add(this.max, this.min));
   this.normalSize = MultiplySV(0.5, Subtract(this.max, this.min));
+  /** @deprecated */
   this.mapSize = Subtract(this.max, this.min);
 
-  let col = [0.35, 0.35, 0.35];
+  /** @deprecated */
+  let col = [0, 0, 0];
+  // let col = [0.35, 0.35, 0.35];
 
   // collisionMin, collisionMax
+  /** @deprecated */
   this.cmin = Subtract(this.min, col);
+  /** @deprecated */
   this.cmax = Add(this.max, col);
 };
 
@@ -34,9 +39,18 @@ Box.prototype.update = function() {
 Box.prototype.movePlayer = function(pos) {
   this.min = Add(pos, [-0.4, 0, -0.4]); // clone
   this.min[1] = -0.9;
-  this.max = Add(pos, [0.4, 1.1, 0.4]); 
+  this.max = Add(pos, [0.4, 1.1, 0.4]);
   this.update();
 };
+
+Box.prototype.moveProj = function(pos) {
+  this.min = Add(pos, [0, 0, 0]);
+  this.max = Add(pos, [0.1, 0.1, 0.3]);
+  this.update();
+};
+
+
+
 
 // A Light.
 var Light = function(ltype, intensity, position) {

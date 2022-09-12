@@ -32,7 +32,7 @@ function updateKeyboard() {
 }
 
 function movePlayer(direction) {
-  let movement = 
+  let movement =
     MultiplySV(
       moveSpeed,
       MultiplyMV(
@@ -59,7 +59,7 @@ function movePlayer(direction) {
         box.onPickup();
 
         if (!box.collider) {
-          return;          
+          return;
         }
       }
 
@@ -75,18 +75,19 @@ function movePlayer(direction) {
   });
 
   camera_position = Add(camera_position, movement);
-  
+
   // покачивание камеры при хотьбе
   camera_position[1] += cos(Date.now() / 100) / 100;
-  
+
   // возвращаем в ноль постепенно, если зашли слишком далеко
   if (abs(camera_position[1]) > 0.1) {
     camera_position[1] *= 0.0001;
   }
-  
+
   playerBox.movePlayer(camera_position);
 
-  playerLight.position = Add(camera_position, [0, 0, 1]);
+  playerLight1.position = Add(camera_position, [0, 0, 1]);
+  // playerLight2.position = Add(camera_position, [0, 0, -1]);
 }
 
 // mouse
@@ -96,10 +97,13 @@ canvas.onclick = () => {
 };
 
 document.addEventListener('mousemove', updateMouse);
+document.addEventListener('mousedown', mouseDown);
+document.addEventListener('mouseup', mouseUp);
 
 // to the top, to constants
 let mouseSpeed = 0.002;
-let moveSpeed = 0.1;
+let moveSpeed = 0.2;
+let isMousePressed = false;
 
 let mouseRot = {
   x: 0,
@@ -110,7 +114,7 @@ function updateMouse(e) {
   if (document.pointerLockElement === canvas) {
     let newX = e.movementX * mouseSpeed;
     let newY = e.movementY * mouseSpeed;
-    
+
     let yCut = PI2 - .01; // engines may not like yRot == pi/2
 
     let oldX = mouseRot.x;
@@ -142,4 +146,15 @@ function updateMouse(e) {
       [-sin(x), sin(y), cos(x) * cos(y)]
     ];
   }
+}
+
+function mouseDown() {
+  isMousePressed = true;
+
+  // tmp, need rate
+  newProjectile();
+}
+
+function mouseUp() {
+  isMousePressed = false;
 }

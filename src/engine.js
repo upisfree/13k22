@@ -113,7 +113,7 @@ var IntersectRayBox = function(origin, direction, box) {
   return tmin;
 }
 
-var ComputeLighting = function(point, normal, view, specular) {
+var ComputeLighting = function(point, normal, view, specular, isWall) {
   var intensity = 0;
   var length_n = Length(normal);  // Should be 1.0, but just in case...
   var length_v = Length(view);
@@ -135,9 +135,11 @@ var ComputeLighting = function(point, normal, view, specular) {
       }
 
       // Shadow check.
-      var blocker = ClosestIntersection(point, vec_l, EPSILON, t_max);
-      if (blocker) {
-        continue;
+      if (!isWall) {
+        var blocker = ClosestIntersection(point, vec_l, EPSILON, t_max);
+        if (blocker) {
+          continue;
+        }
       }
 
       // Diffuse reflection.
@@ -168,7 +170,7 @@ var ClosestIntersection = function(origin, direction, min_t, max_t) {
 
   for (var i = 0; i < boxes.length; i++) {
     var ts = IntersectRayBox(origin, direction, boxes[i]);
-    
+
     if (ts < closest_t && min_t < ts && ts < max_t) {
       closest_t = ts;
       closest_object = boxes[i];
@@ -234,7 +236,7 @@ var GetColorFromMap = function(box, point, normal) {
 // Traces a ray against the set of spheres in the scene.
 var TraceRay = function(origin, direction, min_t, max_t, depth) {
   var intersection = ClosestIntersection(origin, direction, min_t, max_t);
-  
+
   if (!intersection) {
     return getBackgroundColor();
   }
@@ -245,14 +247,16 @@ var TraceRay = function(origin, direction, min_t, max_t, depth) {
   var point = Add(origin, MultiplySV(closest_t, direction));
 
   var normal;
-  if (closest_object instanceof Box) {
+  var isBox = closest_object instanceof Box;
+  var isWall = walls.includes(closest_object);
+  if (isBox) {
     normal = NormalBox(point, closest_object);
   }
 
   var view = MultiplySV(-1, direction);
-  var lighting = ComputeLighting(point, normal, view, closest_object.specular);
+  var lighting = ComputeLighting(point, normal, view, closest_object.specular, isWall);
   var local_color;
-  
+
   if (closest_object instanceof Box && closest_object.map) {
     let color = GetColorFromMap(closest_object, point, normal);
     color = Add(color, closest_object.color);
