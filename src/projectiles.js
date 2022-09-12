@@ -1,14 +1,10 @@
 let projectiles = [];
 let projSpeed = 0.5;
 
-function newProjectile() {
+function newProjectile(pos, dir) {
   let p = {
-    pos: Add(camera_position, [0,0,0]), // clone camera pos
-    dir: [
-      sin(mouseRot.x),
-      0,
-      cos(mouseRot.x)
-    ],
+    pos: Add(pos, [0,0,0]), // clone camera pos
+    dir: dir,
     box: new Box([0, 0, 0], [0.1, 0.1, 0.1], [255, 0, 0], 500, 0)
   };
 
@@ -22,9 +18,7 @@ function updateProjectiles() {
   //   newProjectile();
   // }
 
-  projectiles.forEach(p => {
-    updateProj(p);
-  });
+  projectiles.forEach(updateProj);
 }
 
 function updateProj(p) {
@@ -37,6 +31,10 @@ function updateProj(p) {
   p.pos = Add(p.pos, movement);
   p.pos[1] = -0.1;
   p.box.moveProj(p.pos);
+
+  let targets = [playerBox, ...npcs];
+
+  t
 
   removeProj(p);
 }

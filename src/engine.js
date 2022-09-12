@@ -6,7 +6,7 @@
 
 function getBackgroundColor() {
   // star
-  if (Math.random() > .99998) {
+  if (random() > .99998) {
     return [0, 0, 0];
   }
 
@@ -147,7 +147,7 @@ var ComputeLighting = function(point, normal, view, specular, isWall) {
         var vec_r = ReflectRay(vec_l, normal);
         var r_dot_v = DotProduct(vec_r, view);
         if (r_dot_v > 0) {
-          intensity += light.intensity * Math.pow(r_dot_v / (Length(vec_r) * length_v), specular);
+          intensity += light.intensity * pow(r_dot_v / (Length(vec_r) * length_v), specular);
         }
       }
     }

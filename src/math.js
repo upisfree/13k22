@@ -1,15 +1,10 @@
 // to the top, to constants
 let EPS = 0.01;
 let PI2 = Math.PI / 2;
-let sin = Math.sin;
-let cos = Math.cos;
-let tan = Math.tan;
-let sqrt = Math.sqrt;
-let min = Math.min;
-let max = Math.max;
-let abs = Math.abs;
-let sign = Math.sign;
-let round = Math.round;
+let PI = Math.PI;
+let {
+  sin, cos, tan, sqrt, min, max, abs, sign, random, pow, atan2
+} = Math;
 
 function step(edge, x) {
   if (x < edge) {
@@ -21,34 +16,26 @@ function step(edge, x) {
 
 const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
 
-// ======================================================================
-//  Linear algebra and helpers.
-// ======================================================================
-
 // Conceptually, an "infinitesimaly small" real number.
 var EPSILON = 0.001;
 
-
 // Dot product of two 3D vectors.
-var DotProduct = function(v1, v2) {
+function DotProduct(v1, v2) {
   return v1[0]*v2[0] + v1[1]*v2[1] + v1[2]*v2[2];
 }
 
-
 // Length of a 3D vector.
-var Length = function(vec) {
-  return Math.sqrt(DotProduct(vec, vec));
+function Length(vec) {
+  return sqrt(DotProduct(vec, vec));
 }
 
-
 // Multiplies a scalar and a vector.
-var MultiplySV = function(k, vec) {
+function MultiplySV(k, vec) {
   return [k*vec[0], k*vec[1], k*vec[2]];
 }
 
-
 // Multiplies a matrix and a vector.
-var MultiplyMV = function(mat, vec) {
+function MultiplyMV(mat, vec) {
   var result = [0, 0, 0];
 
   for (var i = 0; i < 3; i++) {
@@ -60,33 +47,29 @@ var MultiplyMV = function(mat, vec) {
   return result;
 }
 
-
 // Computes v1 + v2.
-var Add = function(v1, v2) {
+function Add(v1, v2) {
   return [v1[0] + v2[0], v1[1] + v2[1], v1[2] + v2[2]];
 }
 
-
 // Computes v1 - v2.
-var Subtract = function(v1, v2) {
+function Subtract(v1, v2) {
   return [v1[0] - v2[0], v1[1] - v2[1], v1[2] - v2[2]];
 }
 
-
 // Clamps a color to the canonical color range.
-var Clamp = function(vec) {
-  return [Math.min(255, Math.max(0, vec[0])),
-      Math.min(255, Math.max(0, vec[1])),
-      Math.min(255, Math.max(0, vec[2]))];
+function Clamp(vec) {
+  return [min(255, max(0, vec[0])),
+      min(255, max(0, vec[1])),
+      min(255, max(0, vec[2]))];
 }
 
-
 // Computes the reflection of v1 respect to v2.
-var ReflectRay = function(v1, v2) {
+function ReflectRay(v1, v2) {
   return Subtract(MultiplySV(2*DotProduct(v1, v2), v2), v1);
 }
 
-var InvertDirection = function(dir) {
+function InvertDirection(dir) {
   return [
     1 / dir[0],
     1 / dir[1],
@@ -94,10 +77,8 @@ var InvertDirection = function(dir) {
   ];
 }
 
-var DistanceBetween = function(v1, v2) {
-  var dx = v1[0] - v2[0];
-  var dy = v1[1] - v2[1];
-  var dz = v1[2] - v2[2];
-
-  return Math.sqrt( dx * dx + dy * dy + dz * dz );
+function ContainsPoint(point, box) {
+  return point[0] < box.min[0] || point[0] > box.max[0] ||
+         point[1] < box.min[1] || point[1] > box.max[1] ||
+         point[2] < box.min[2] || point[2] > box.max[2] ? false : true;
 }

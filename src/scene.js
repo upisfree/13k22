@@ -1,4 +1,4 @@
-var Box = function(min, max, color, specular, reflective, collider = true, onPickup = null) {
+var Box = function(min, max, color, specular, reflective, collider = true, onCollide = null) {
   this.min = min;
   this.max = max;
 
@@ -8,7 +8,7 @@ var Box = function(min, max, color, specular, reflective, collider = true, onPic
   this.specular = specular;
   this.reflective = reflective;
   this.collider = collider;
-  this.onPickup = onPickup;
+  this.onCollide = onCollide;
 
   // если я соберусь обновлять bounds, min, max коробки, то надо обновить следующие свойства:
   // move() сделать надо тогда
@@ -24,9 +24,9 @@ Box.prototype.update = function() {
 
 // только для игрока? запомниать первоначальные bounds коробки?
 Box.prototype.movePlayer = function(pos) {
-  this.min = Add(pos, [-0.4, 0, -0.4]); // clone
+  this.min = Add(pos, [-0.3, 0, -0.3]);
   this.min[1] = -0.9;
-  this.max = Add(pos, [0.4, 1.1, 0.4]);
+  this.max = Add(pos, [0.3, 0.7, 0.3]);
   this.update();
 };
 

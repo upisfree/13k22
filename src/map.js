@@ -1,4 +1,4 @@
-let _wallColor = Math.random() * 255;
+let _wallColor = random() * 255;
 let wallColor = [_wallColor,_wallColor,_wallColor];
 let wallSpec = 1000;
 let wallRefl = 0.25;
@@ -11,7 +11,7 @@ function generateMap() {
       if (
         (x > 1 || x < -1) && // safe
         (y > 1 || y < -1) && // space
-        Math.random() < 0.15
+        random() < 0.15
       ) {
         addWall(x, y);
       }

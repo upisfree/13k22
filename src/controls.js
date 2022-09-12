@@ -55,8 +55,8 @@ function movePlayer(direction) {
 
     // x collision
     if (isCollision(a, b)) {
-      if (box.onPickup) {
-        box.onPickup();
+      if (box.onCollide) {
+        box.onCollide();
 
         if (!box.collider) {
           return;
@@ -152,7 +152,14 @@ function mouseDown() {
   isMousePressed = true;
 
   // tmp, need rate
-  newProjectile();
+  newProjectile(
+    camera_position,
+    [
+      sin(mouseRot.x),
+      0,
+      cos(mouseRot.x)
+    ]
+  );
 }
 
 function mouseUp() {
