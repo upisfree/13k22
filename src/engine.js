@@ -13,9 +13,6 @@ function getBackgroundColor() {
   return fogColor;
 }
 
-
-
-
 var canvas = document.getElementById("canvas");
 var canvas_context = canvas.getContext("2d");
 var canvas_buffer = canvas_context.getImageData(0, 0, canvas.width, canvas.height);
@@ -43,9 +40,6 @@ var PutPixel = function(x, y, color) {
 var UpdateCanvas = function() {
   canvas_context.putImageData(canvas_buffer, 0, 0);
 }
-
-
-
 
 // ======================================================================
 //  A raytracer with diffuse and specular illumination, shadows and reflections,
@@ -197,42 +191,6 @@ var NormalBox = function(point, box) {
   return MultiplySV(1.0 / Length(normal), normal);
 }
 
-// box version
-var GetColorFromMap = function(box, point, normal) {
-  let { data, width, height } = box.map; // ImageData
-
-  let size = box.mapSize;
-
-  // uv
-  let u = (box.max[0] - point[0]) / size[0];
-
-  // другая сторона куба
-  if (normal[0] !== 0) {
-    u = (box.max[2] - point[2]) / size[2];
-  }
-
-  let v = (box.max[1] - point[1]) / size[1];
-
-  // низ куба
-  if (normal[1] !== 0) {
-    v = (box.max[2] - point[2]) / size[2];
-  }
-
-  // xy in texture space
-  let x = round((u) * width);
-  let y = round((v) * height);
-
-  let i = (y * (width * 4)) + (x * 4);
-
-  let color = [
-    data[i],
-    data[i + 1],
-    data[i + 2]
-  ];
-
-  return color;
-}
-
 // Traces a ray against the set of spheres in the scene.
 var TraceRay = function(origin, direction, min_t, max_t, depth) {
   var intersection = ClosestIntersection(origin, direction, min_t, max_t);
@@ -246,35 +204,23 @@ var TraceRay = function(origin, direction, min_t, max_t, depth) {
 
   var point = Add(origin, MultiplySV(closest_t, direction));
 
-  var normal;
-  var isBox = closest_object instanceof Box;
+  var normal = NormalBox(point, closest_object);
   var isWall = walls.includes(closest_object);
-  if (isBox) {
-    normal = NormalBox(point, closest_object);
-  }
 
   var view = MultiplySV(-1, direction);
   var lighting = ComputeLighting(point, normal, view, closest_object.specular, isWall);
-  var local_color;
-
-  if (closest_object instanceof Box && closest_object.map) {
-    let color = GetColorFromMap(closest_object, point, normal);
-    color = Add(color, closest_object.color);
-    local_color = MultiplySV(lighting, color);
-  } else {
-    local_color = MultiplySV(lighting, closest_object.color);
-  }
+  var local_color = MultiplySV(lighting, closest_object.color);
 
   if (closest_object.reflective <= 0 || depth <= 0) {
     return local_color;
   }
 
-  var reflected_ray = ReflectRay(view, normal);
+  let reflected_ray = ReflectRay(view, normal);
   // EPS = 0.01
   // EPSILON? 0.001
-  var reflected_color = TraceRay(point, reflected_ray, EPS, maxRenderDistance, depth - 1);
+  let reflected_color = TraceRay(point, reflected_ray, EPS, maxRenderDistance, depth - 1);
 
-  var outColor = Add(
+  let outColor = Add(
     MultiplySV(
       1 - closest_object.reflective,
       local_color
@@ -285,11 +231,9 @@ var TraceRay = function(origin, direction, min_t, max_t, depth) {
     )
   );
 
-  // let distance = DistanceBetween(origin, camera_position);
-  // let fogCoef = distance / max_t;
   let fogCoef = closest_t / max_t;
 
-  var fog = [
+  let fog = [
     fogColor[0] * fogCoef,
     fogColor[1] * fogCoef,
     fogColor[2] * fogCoef

@@ -22,7 +22,6 @@ function generateMap() {
     [-12 * wallSize, -1, -12 * wallSize],
     [-12 * wallSize + wallSize, 1, 12 * wallSize + wallSize],
     wallColor,
-    null,
     wallSpec,
     wallRefl
   );
@@ -31,7 +30,6 @@ function generateMap() {
     [12 * wallSize, -1, -12 * wallSize],
     [12 * wallSize + wallSize, 1, 12 * wallSize + wallSize],
     wallColor,
-    null,
     wallSpec,
     wallRefl
   );
@@ -40,7 +38,6 @@ function generateMap() {
     [-12 * wallSize, -1, 12 * wallSize],
     [12 * wallSize + wallSize, 1, 12 * wallSize + wallSize],
     wallColor,
-    null,
     wallSpec,
     wallRefl
   );
@@ -49,7 +46,6 @@ function generateMap() {
     [-12 * wallSize, -1, -12 * wallSize],
     [12 * wallSize + wallSize, 1, -12 * wallSize + wallSize],
     wallColor,
-    null,
     wallSpec,
     wallRefl
   );
@@ -63,7 +59,6 @@ function addWall(x, y) {
     [x * wallSize, -1, y * wallSize],
     [x * wallSize + wallSize, 1, y * wallSize + wallSize],
     wallColor,
-    null,
     wallSpec,
     wallRefl
   );

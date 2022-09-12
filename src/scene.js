@@ -1,11 +1,10 @@
-var Box = function(min, max, color, map, specular, reflective, collider = true, onPickup = null) {
+var Box = function(min, max, color, specular, reflective, collider = true, onPickup = null) {
   this.min = min;
   this.max = max;
 
   this.bounds = [min, max];
 
   this.color = color; // ambient
-  this.map = map;
   this.specular = specular;
   this.reflective = reflective;
   this.collider = collider;
@@ -21,18 +20,6 @@ Box.prototype.update = function() {
 
   this.center = MultiplySV(0.5, Add(this.max, this.min));
   this.normalSize = MultiplySV(0.5, Subtract(this.max, this.min));
-  /** @deprecated */
-  this.mapSize = Subtract(this.max, this.min);
-
-  /** @deprecated */
-  let col = [0, 0, 0];
-  // let col = [0.35, 0.35, 0.35];
-
-  // collisionMin, collisionMax
-  /** @deprecated */
-  this.cmin = Subtract(this.min, col);
-  /** @deprecated */
-  this.cmax = Add(this.max, col);
 };
 
 // только для игрока? запомниать первоначальные bounds коробки?
@@ -49,9 +36,6 @@ Box.prototype.moveProj = function(pos) {
   this.update();
 };
 
-
-
-
 // A Light.
 var Light = function(ltype, intensity, position) {
   this.ltype = ltype;
@@ -62,46 +46,3 @@ var Light = function(ltype, intensity, position) {
 Light.AMBIENT = 0;
 Light.POINT = 1;
 Light.DIRECTIONAL = 2;
-
-
-
-
-
-/** @deprecated */
-function loadImage(url, callback) {
-  let img = new Image();
-  img.src = url;
-  img.addEventListener('load', function() {
-    callback(img);
-  }, false);
-}
-
-function getRawTexture(texture) {
-  let _canvas = document.createElement('canvas');
-
-  // хром не грузит иначе в память всю текстуру
-  _canvas.width = texture.width;
-  _canvas.height = texture.height;
-
-  let _context = _canvas.getContext('2d');
-  let _buffer = _context.createImageData(texture.width, texture.height);
-
-  _context.drawImage(texture, 0, 0);
-
-  // document.body.appendChild(_canvas); // только для дебага
-
-  return _context.getImageData(0, 0, texture.width, texture.height);
-}
-
-let textureBuffer;
-
-loadImage('avatar.png',
-// loadImage('uv-grid-opengl.jpg',
-  (img) => {
-    textureBuffer = getRawTexture(img);
-    // boxes[1].map = textureBuffer;
-    playerBox.map = textureBuffer;
-
-    console.log(textureBuffer);
-  }
-);

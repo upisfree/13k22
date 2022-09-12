@@ -8,7 +8,7 @@ function newNPC() {
       0,
       cos(mouseRot.x)
     ],
-    box: new Box([0, 0, 0], [0.1, 0.1, 0.1], [255, 0, 0], null, 500, 0)
+    box: new Box([0, 0, 0], [0.1, 0.1, 0.1], [255, 0, 0], 500, 0)
   };
 
   projectiles.push(p);
