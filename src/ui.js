@@ -9,23 +9,38 @@ function printShadowedText(text, fontSize, x, y, italic = true) {
   printText(text, fontSize, '#fff', x, y, italic);
 }
 
-function printBackgroundedText(text, fontSize, textColor, backgroundColor, x, y, w, h) {
-  // gl.font = 'small-caps bold italic ' + fontSize + 'px sans-serif';
-  gl.font = 'italic ' + fontSize + 'px sans-serif';
-  gl.fillStyle = backgroundColor;
-  gl.fillRect(x - fontSize / 4, y - fontSize + 2, text.length * fontSize / 2 + 2, fontSize);
-  // gl.fillRect(x, y, w, h);
-  gl.fillStyle = textColor;
-  gl.fillText(text, x, y);
+function renderUI() {
+  if (!isGameStarted && !isGameEnded) {
+    renderStartUI();
+  } else if (isGameStarted && !isGameEnded) {
+    renderInGameUI();
+  } else if (isGameStarted && isGameEnded) {
+    renderEndUI();
+  }
 }
 
-function renderUI() {
+function renderStartUI() {
+  printShadowedText('➰➰➰➰➰', 11, 15, 20, false);
+  printShadowedText('☠️️', 16, 40, 20, false);
+
+  printShadowedText('DEATH  DEATH  DEATH', 8, 5, 36);
+
+  printText('KILL  EVERYBODY', 9, '#000', 10, 48, true);
+  printText('YOU  LOVE', 9, '#000', 24, 56, true);
+
+  printText('WASD & MOUSE', 9, '#000', 13, 67, true);
+  printText('CLICK  TO  START', 9, '#000', 10, 75, true);
+
+  printText('A GAME BY SENYA PUGACH', 7, '#000', 2, 96, true);
+}
+
+function renderInGameUI() {
   // health
   printShadowedText('❤️', 7, 4, 11, false);
   printShadowedText(
     `${round(playerHealth * 100)}` // .toString()
       .split('')
-      .join((playerHealth !== 1) ? ' ' : ''),
+      .join((playerHealth !== 1) ? ' ' : ''), // custom for 100
     10,
     16,
     12,
@@ -34,5 +49,33 @@ function renderUI() {
 
   // kills
   printShadowedText('💀', 7, 4, 23, false);
-  printShadowedText(score,10,16,24,true);
+  printShadowedText(
+    getNumberWithSpaces(score),
+    10,
+    16,
+    24,
+    true
+  );
+}
+
+function renderEndUI() {
+  gl.fillStyle = 'rgba(0, 0, 0, 0.5)';
+  gl.fillRect(0, 0, canvas.width, canvas.height);
+
+  printShadowedText('➰➰➰➰➰', 11, 15, 20, false);
+  printShadowedText('☠️️', 16, 40, 20, false);
+
+  printShadowedText(getNumberWithSpaces(score) + ' DEATHS', 9, 5, 40);
+  printShadowedText('ON YOUR HANDS', 9, 5, 50);
+  printShadowedText('ARE YOU HAPPY?', 9, 5, 60);
+
+  printShadowedText('REFRESH TO RESTART', 8, 4, 78, true);
+
+  printText('A GAME BY SENYA PUGACH', 7, '#000', 2, 96, true);
+}
+
+function getNumberWithSpaces(num) {
+  return `${num}` // .toString()
+    .split('')
+    .join(' ');
 }

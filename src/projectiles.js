@@ -5,7 +5,7 @@ function newProjectile(pos, dir, author) {
   let p = {
     pos: Add(pos, [0,0,0]), // clone camera pos
     dir: dir,
-    box: new Box([0, 0, 0], [0.1, 0.1, 0.1], [255, 0, 0], 500, 0),
+    box: new Box([0, 0, 0], [0.1, 0.1, 0.1], [255, 63, 49], 500, 0), // #ff3f31
     author
   };
 

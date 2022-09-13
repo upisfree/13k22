@@ -23,7 +23,9 @@ function render() {
 function loop() {
   requestAnimationFrame(loop);
 
-  updateKeyboard();
+  if (!isGameEnded) {
+    updateKeyboard();
+  }
 
   updateProjectiles();
   updateNPCs();
@@ -35,7 +37,20 @@ function loop() {
 }
 
 function death() {
-  console.log('deaths on you:', score);
+  isGameEnded = true;
+
+  document.body.classList.add('ended');
+}
+
+function start() {
+  isGameStarted = true;
+
+  generateMap();
+
+  newNPC();
+  newNPC();
+
+  loop();
 }
 
 // если луч занимает слишком много, то просто отбрасывать его — это и будут артeфакты и ускорение вычислений
@@ -47,6 +62,8 @@ let playerHealth = 1;
 let playerHeal = 0.05; // gives you after kill
 let playerDamage = 0.25;
 let score = 0;
+let isGameStarted = false;
+let isGameEnded = false;
 
 let boxes = [
   new Box([-5000, -2, -5000], [5000, -1, 5000], wallColor, wallSpec, wallRefl, false), // ground
@@ -78,26 +95,6 @@ let maxRenderDistance = 50;
 
 let fogColor = [220, 220, 220];
 
-generateMap();
+renderStartUI();
 
-newNPC();
-newNPC();
-
-loop();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+start();

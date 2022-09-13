@@ -17,10 +17,12 @@ function getPos() {
 }
 
 function newNPC() {
+  let color = [0, 255 * random(), 255 * random()];
+
   let n = {
     pos: getPos(),
     dir: 0,
-    box: new Box([0, -0.9, 0], [1, 1, 1], [0, 255 * random(), 255 * random()], 500, 0, true, onNPCAndPlayerCollide),
+    box: new Box([0, -0.9, 0], [1, 1, 1], color, 500, 0, true, onNPCAndPlayerCollide),
     start: Date.now(),
     health: 1
   };

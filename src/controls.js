@@ -111,7 +111,7 @@ let mouseRot = {
 };
 
 function updateMouse(e) {
-  if (document.pointerLockElement === canvas) {
+  if (document.pointerLockElement === canvas && !isGameEnded) {
     let newX = e.movementX * mouseSpeed;
     let newY = e.movementY * mouseSpeed;
 
@@ -127,11 +127,11 @@ function updateMouse(e) {
     let y = mouseRot.y;
 
     // // Вращение по оси X — ок отдельноо
-    // camera_rotation = [
-    //     [cos(x), 0, sin(x)],
-    //     [0, 1, 0],
-    //     [-sin(x), 0, cos(x)]
-    // ];
+    camera_rotation = [
+        [cos(x), 0, sin(x)],
+        [0, 1, 0],
+        [-sin(x), 0, cos(x)]
+    ];
     // Вращение по оси Y — ок отедльно
     // camera_rotation = [
     //   [1, 0, 0],
@@ -140,15 +140,23 @@ function updateMouse(e) {
     // ];
 
     // x y — искажения вверх вниз, но термимо
-    camera_rotation = [
-      [cos(x), 0, sin(x)],
-      [0, cos(y), -sin(y)],
-      [-sin(x), sin(y), cos(x) * cos(y)]
-    ];
+    // camera_rotation = [
+    //   [cos(x), 0, sin(x)],
+    //   [0, cos(y), -sin(y)],
+    //   [-sin(x), sin(y), cos(x) * cos(y)]
+    // ];
   }
 }
 
 function mouseDown() {
+  if (document.pointerLockElement === null || isGameEnded) {
+    return;
+  }
+
+  if (!isGameStarted) {
+    start();
+  }
+
   isMousePressed = true;
 
   // tmp, need rate

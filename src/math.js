@@ -76,9 +76,3 @@ function InvertDirection(dir) {
     1 / dir[2]
   ];
 }
-
-function ContainsPoint(point, box) {
-  return point[0] < box.min[0] || point[0] > box.max[0] ||
-         point[1] < box.min[1] || point[1] > box.max[1] ||
-         point[2] < box.min[2] || point[2] > box.max[2] ? false : true;
-}

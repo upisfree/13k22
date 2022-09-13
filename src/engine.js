@@ -6,7 +6,7 @@
 
 function getBackgroundColor() {
   // star
-  if (random() > .99998) {
+  if (random() > (isGameEnded ? 0.99 : 0.99998)) {
     return [0, 0, 0];
   }
 
@@ -18,9 +18,7 @@ let gl = canvas.getContext("2d");
 let canvas_buffer = gl.getImageData(0, 0, canvas.width, canvas.height);
 let canvas_pitch = canvas_buffer.width * 4;
 
-
-// The PutPixel() function.
-let PutPixel = function(x, y, color) {
+function PutPixel(x, y, color) {
   x = canvas.width/2 + x;
   y = canvas.height/2 - y - 1;
 
@@ -35,9 +33,7 @@ let PutPixel = function(x, y, color) {
   canvas_buffer.data[offset++] = 255; // Alpha = 255 (full opacity)
 }
 
-
-// Displays the contents of the offscreen buffer into the canvas.
-let UpdateCanvas = function() {
+function UpdateCanvas() {
   gl.putImageData(canvas_buffer, 0, 0);
 }
 
@@ -47,13 +43,13 @@ let UpdateCanvas = function() {
 // ======================================================================
 
 // Converts 2D canvas coordinates to 3D viewport coordinates.
-let CanvasToViewport = function(p2d) {
+function CanvasToViewport(p2d) {
   return [p2d[0] * viewport_size / canvas.width,
       p2d[1] * viewport_size / canvas.height,
       projection_plane_z];
 }
 
-let IntersectRayBox = function(origin, direction, box) {
+function IntersectRayBox(origin, direction, box) {
   let tmin, tmax, tymin, tymax, tzmin, tzmax;
   let bounds = box.bounds;
 
@@ -107,7 +103,7 @@ let IntersectRayBox = function(origin, direction, box) {
   return tmin;
 }
 
-let ComputeLighting = function(point, normal, view, specular, isWall) {
+function ComputeLighting(point, normal, view, specular, isWall) {
   let intensity = 0;
   let length_n = Length(normal);  // Should be 1.0, but just in case...
   let length_v = Length(view);
@@ -158,7 +154,7 @@ let ComputeLighting = function(point, normal, view, specular, isWall) {
 
 
 // Find the closest intersection between a ray and the spheres in the scene.
-let ClosestIntersection = function(origin, direction, min_t, max_t) {
+function ClosestIntersection(origin, direction, min_t, max_t) {
   let closest_t = Infinity;
   let closest_object = null;
 
@@ -179,7 +175,7 @@ let ClosestIntersection = function(origin, direction, min_t, max_t) {
   return null;
 }
 
-let NormalBox = function(point, box) {
+function NormalBox(point, box) {
   let pc = Subtract(point, box.center);
 
   let normal = [
@@ -192,7 +188,7 @@ let NormalBox = function(point, box) {
 }
 
 // Traces a ray against the set of spheres in the scene.
-let TraceRay = function(origin, direction, min_t, max_t, depth) {
+function TraceRay(origin, direction, min_t, max_t, depth) {
   let intersection = ClosestIntersection(origin, direction, min_t, max_t);
 
   if (!intersection) {
