@@ -158,7 +158,8 @@ function mouseDown() {
       sin(mouseRot.x),
       0,
       cos(mouseRot.x)
-    ]
+    ],
+    'player'
   );
 }
 

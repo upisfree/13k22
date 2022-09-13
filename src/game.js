@@ -34,13 +34,19 @@ function loop() {
   }
 }
 
+function death() {
+  console.log('deaths on you:', score);
+}
+
 // если луч занимает слишком много, то просто отбрасывать его — это и будут артeфакты и ускорение вычислений
 
 let playerBox = new Box([0, -0.9, 0], [1, 1, 1], [0, 0, 255], 500, 0, false);
 let playerLight1 = new Light(Light.POINT, 0.6, [0, 0, 1.2]);
 let playerLight2 = new Light(Light.POINT, 0.6, [0, 0, -1.2]);
 let playerHealth = 1;
+let playerHeal = 0.05; // gives you after kill
 let playerDamage = 0.25;
+let score = 0;
 
 var boxes = [
   new Box([-5000, -2, -5000], [5000, -1, 5000], [255, 255, 255], 1000, 0.1, false), // ground

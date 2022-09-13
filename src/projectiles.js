@@ -1,11 +1,12 @@
 let projectiles = [];
 let projSpeed = 0.5;
 
-function newProjectile(pos, dir) {
+function newProjectile(pos, dir, author) {
   let p = {
     pos: Add(pos, [0,0,0]), // clone camera pos
     dir: dir,
-    box: new Box([0, 0, 0], [0.1, 0.1, 0.1], [255, 0, 0], 500, 0)
+    box: new Box([0, 0, 0], [0.1, 0.1, 0.1], [255, 0, 0], 500, 0),
+    author
   };
 
   projectiles.push(p);
@@ -34,7 +35,41 @@ function updateProj(p) {
 
   let targets = [playerBox, ...npcs];
 
-  t
+  targets.some((target, index) => {
+    if (index === 0) {
+      // player
+      if (isCollision(target, p.box) && p.author !== 'player') { // нет самострелу
+//////////////////////////////////show red screen something/////////
+        playerHealth -= npcProjDamage;
+
+        console.log('player health', playerHealth);
+
+        removeProj(p);
+
+        if (playerHealth <= 0) {
+          death();
+        }
+      }
+    } else {
+      // npc
+      if (isCollision(target.box, p.box) && p.author !== target) { // нет самострелу
+        target.health -= playerDamage;
+
+        console.log('npc health', target.health);
+
+        if (target.health <= 0) {
+          removeNPC(target, true);
+
+          if (p.author === 'player') {
+            playerHealth += playerHeal;
+            score++;
+          }
+        }
+
+        removeProj(p);
+      }
+    }
+  });
 
   removeProj(p);
 }

@@ -3,7 +3,7 @@ let EPS = 0.01;
 let PI2 = Math.PI / 2;
 let PI = Math.PI;
 let {
-  sin, cos, tan, sqrt, min, max, abs, sign, random, pow, atan2
+  sin, cos, tan, sqrt, min, max, abs, sign, random, pow, round
 } = Math;
 
 function step(edge, x) {

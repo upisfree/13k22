@@ -1,9 +1,9 @@
 let npcs = [];
-let npcSpeed = 0.05;
+let npcSpeed = 0.1;
 let npcProjSpeed = 0.1;
 let npcProjDamage = 0.05;
-let npcFireRate = 0.01;
-let npcSpawnChance = 0.0025;
+let npcFireRate = 0.003;
+let npcSpawnChance = 0.005;
 let npcDespawnTime = 60000;
 
 function getPos() {
@@ -84,13 +84,5 @@ function fireNPC(npc) {
     )
   );
 
-  let dir = atan2(
-    camera_position[2] - npc.pos[2],
-    camera_position[0] - npc.pos[0]
-  );
-
-  newProjectile(
-    npc.pos,
-    diff
-  );
+  newProjectile(npc.pos, diff, npc);
 }

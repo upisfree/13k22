@@ -1,8 +1,12 @@
-function printText(text, fontSize, color, x, y) {
-  // canvas_context.font = 'small-caps bold italic ' + fontSize + 'px sans-serif';
-  canvas_context.font = 'italic ' + fontSize + 'px sans-serif';
+function printText(text, fontSize, color, x, y, italic = true) {
+  canvas_context.font = ((italic) ? 'italic ' : '') + fontSize + 'px sans-serif';
   canvas_context.fillStyle = color;
   canvas_context.fillText(text, x, y);
+}
+
+function printShadowedText(text, fontSize, x, y, italic = true) {
+  printText(text, fontSize, '#000', x + 1, y + 1, italic);
+  printText(text, fontSize, '#fff', x, y, italic);
 }
 
 function printBackgroundedText(text, fontSize, textColor, backgroundColor, x, y, w, h) {
@@ -15,11 +19,15 @@ function printBackgroundedText(text, fontSize, textColor, backgroundColor, x, y,
   canvas_context.fillText(text, x, y);
 }
 
-// сделать тупо стрелялку? с пулями? и пусть нпс перестреливаются друг с другомсде
-
 function renderUI() {
-  printText('привет hello 123', 10, '#000', 13 + 1, 15 + 1);
-  printText('привет hello 123', 10, '#fff', 13, 15);
-
-  // printBackgroundedText('привет hello 123', 10, '#fff', 'rgba(0, 0, 0, 0.9)', 13, 15, 50, 50)
+  printShadowedText('❤️', 7, 4, 11, false);
+  printShadowedText(
+    `${round(playerHealth * 100)}` // .toString()
+      .split('')
+      .join((playerHealth !== 1) ? ' ' : ''),
+    10,
+    16,
+    12,
+    true
+  );
 }
