@@ -189,6 +189,41 @@ function NormalBox(point, box) {
   return MultiplySV(1.0 / Length(normal), normal);
 }
 
+function GetColorFromMap(box, point, normal) {
+  let { data, width, height } = box.map; // ImageData
+
+  let size = box.mapSize;
+
+  // uv
+  let u = (box.max[0] - point[0]) / size[0];
+
+  // другая сторона куба
+  if (normal[0] !== 0) {
+    u = (box.max[2] - point[2]) / size[2];
+  }
+
+  let v = (box.max[1] - point[1]) / size[1];
+
+  // низ куба
+  if (normal[1] !== 0) {
+    v = (box.max[2] - point[2]) / size[2];
+  }
+
+  // xy in texture space
+  let x = round((u) * width);
+  let y = round((v) * height);
+
+  let i = (y * (width * 4)) + (x * 4);
+
+  let color = [
+    data[i],
+    data[i + 1],
+    data[i + 2]
+  ];
+
+  return color;
+}
+
 // Traces a ray against the set of spheres in the scene.
 function TraceRay(origin, direction, min_t, max_t, depth) {
   let intersection = ClosestIntersection(origin, direction, min_t, max_t);
@@ -207,7 +242,15 @@ function TraceRay(origin, direction, min_t, max_t, depth) {
 
   let view = MultiplySV(-1, direction);
   let lighting = ComputeLighting(point, normal, view, closest_object.specular, isWall);
-  let local_color = MultiplySV(lighting, closest_object.color);
+  let local_color;
+
+  if (closest_object.map) {
+    let color = GetColorFromMap(closest_object, point, normal);
+    color = Add(color, closest_object.color);
+    local_color = MultiplySV(lighting, color);
+  } else {
+    local_color = MultiplySV(lighting, closest_object.color);
+  }
 
   if (closest_object.reflective <= 0 || depth <= 0) {
     return local_color;

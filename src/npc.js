@@ -6,6 +6,16 @@ let npcFireRate = 0.0035;
 let npcSpawnChance = 0.006;
 let npcDespawnTime = 60000;
 
+// texture generation
+let _npcCanvas = document.createElement('canvas');
+// хром не грузит иначе в память всю текстуру
+_npcCanvas.width = 35;
+_npcCanvas.height = 100;
+let _npcContext = _npcCanvas.getContext('2d');
+let _npcTextureBuffer = _npcContext.createImageData(_npcCanvas.width, _npcCanvas.height);
+
+
+
 function getPos() {
   let side = 10;
   let x = side * random();
@@ -16,8 +26,26 @@ function getPos() {
   return [x, 0, z];
 }
 
+const emojies = [
+  '🧍🏻',
+  '🧍🏼',
+  '🧍🏽',
+  '🕴🏻',
+  '🕺🏻'
+];
+
+function getNPCTexture(text) {
+  _npcContext.clearRect(0, 0, _npcCanvas.width, _npcCanvas.height);
+
+  _npcContext.font = '120px sans-serif';
+  _npcContext.fillStyle = '#ff0000';
+  _npcContext.fillText(text, -42, 102);
+
+  return _npcContext.getImageData(0, 0, _npcCanvas.width, _npcCanvas.height);
+}
+
 function newNPC() {
-  let color = [128 * random(), 255 * random(), 255 * random()];
+  let color = [0, 0, 0];
 
   let n = {
     pos: getPos(),
@@ -26,6 +54,8 @@ function newNPC() {
     start: Date.now(),
     health: 1
   };
+
+  n.box.map = getNPCTexture(emojies[Math.floor(random() * emojies.length)]);
 
   npcs.push(n);
   boxes.push(n.box);

@@ -20,6 +20,7 @@ Box.prototype.update = function() {
 
   this.center = MultiplySV(0.5, Add(this.max, this.min));
   this.normalSize = MultiplySV(0.5, Subtract(this.max, this.min));
+  this.mapSize = Subtract(this.max, this.min);
 };
 
 // только для игрока? запомниать первоначальные bounds коробки?

@@ -56,7 +56,7 @@ function start() {
   }, 60000);
 }
 
-let playerBox = new Box([0, -0.9, 0], [1, 1, 1], [0, 128, 255], 500, 0, false);
+let playerBox = new Box([0, -0.9, 0], [1, 1, 1], [0, 0, 0], 500, 0, false);
 let playerLight1 = new Light(Light.POINT, 0.7, [0, 0, 1.2]);
 let playerHealth = 1;
 let playerHeal = 0.05; // gives you after kill
@@ -64,6 +64,8 @@ let playerDamage = 0.25;
 let score = 0;
 let isGameStarted = false;
 let isGameEnded = false;
+
+playerBox.map = getNPCTexture('👺');
 
 let boxes = [
   new Box([-5000, -2, -5000], [5000, -1, 5000], wallColor, wallSpec, wallRefl, false), // ground
