@@ -14,11 +14,6 @@ function newProjectile(pos, dir, author) {
 }
 
 function updateProjectiles() {
-  // player
-  // if (isMousePressed) {
-  //   newProjectile();
-  // }
-
   projectiles.forEach(updateProj);
 }
 
@@ -42,11 +37,19 @@ function updateProj(p) {
 //////////////////////////////////show red screen something/////////
         playerHealth -= npcProjDamage;
 
-        console.log('player health', playerHealth);
-
         removeProj(p, true);
 
+        if (!isGameEnded) {
+          zzfxP(playerHitSound);
+        }
+
         if (playerHealth <= 0) {
+          if (!isGameEnded) {
+            zzfxP(playerDeathSound);
+
+            bgMusicNode.stop();
+          }
+
           death();
         }
       }
@@ -62,10 +65,16 @@ function updateProj(p) {
       if (target.box && isCollision(target.box, p.box) && p.author !== target) { // нет самострелу
         target.health -= playerDamage;
 
-        console.log('npc health', target.health);
+        if (!isGameEnded) {
+          zzfxP(npcHitSound);
+        }
 
         if (target.health <= 0) {
           removeNPC(target, true);
+
+          if (!isGameEnded) {
+            zzfxP(npcDeathSound);
+          }
 
           if (p.author === 'player') {
             playerHealth += playerHeal;

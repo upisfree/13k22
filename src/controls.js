@@ -88,6 +88,8 @@ function movePlayer(direction) {
 
   playerLight1.position = Add(camera_position, [0, 0, 1]);
   // playerLight2.position = Add(camera_position, [0, 0, -1]);
+
+  zzfxP(stepSound);
 }
 
 // mouse
