@@ -13,8 +13,10 @@ function getBackgroundColor() {
   return fogColor;
 }
 
-let canvas = document.getElementById("canvas");
-let gl = canvas.getContext("2d");
+let canvas = document.getElementById('canvas');
+let gl = canvas.getContext('2d');
+let canvasUI = document.getElementById('ui');
+let glUI = canvasUI.getContext('2d');
 let canvas_buffer = gl.getImageData(0, 0, canvas.width, canvas.height);
 let canvas_pitch = canvas_buffer.width * 4;
 

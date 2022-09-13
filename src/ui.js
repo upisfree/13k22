@@ -1,7 +1,7 @@
 function printText(text, fontSize, color, x, y, italic = true) {
-  gl.font = ((italic) ? 'italic ' : '') + fontSize + 'px sans-serif';
-  gl.fillStyle = color;
-  gl.fillText(text, x, y);
+  glUI.font = ((italic) ? 'italic ' : '') + fontSize + 'px sans-serif';
+  glUI.fillStyle = color;
+  glUI.fillText(text, x, y);
 }
 
 function printShadowedText(text, fontSize, x, y, italic = true) {
@@ -10,6 +10,8 @@ function printShadowedText(text, fontSize, x, y, italic = true) {
 }
 
 function renderUI() {
+  glUI.clearRect(0, 0, canvasUI.width, canvasUI.height);
+
   if (!isGameStarted && !isGameEnded) {
     renderStartUI();
   } else if (isGameStarted && !isGameEnded) {
@@ -59,8 +61,8 @@ function renderInGameUI() {
 }
 
 function renderEndUI() {
-  gl.fillStyle = 'rgba(0, 0, 0, 0.5)';
-  gl.fillRect(0, 0, canvas.width, canvas.height);
+  glUI.fillStyle = 'rgba(0, 0, 0, 0.5)';
+  glUI.fillRect(0, 0, canvas.width, canvas.height);
 
   printShadowedText('➰➰➰➰➰', 11, 15, 20, false);
   printShadowedText('☠️️', 16, 40, 20, false);
