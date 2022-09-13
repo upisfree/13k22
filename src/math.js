@@ -17,7 +17,7 @@ function step(edge, x) {
 const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
 
 // Conceptually, an "infinitesimaly small" real number.
-var EPSILON = 0.001;
+let EPSILON = 0.001;
 
 // Dot product of two 3D vectors.
 function DotProduct(v1, v2) {
@@ -36,10 +36,10 @@ function MultiplySV(k, vec) {
 
 // Multiplies a matrix and a vector.
 function MultiplyMV(mat, vec) {
-  var result = [0, 0, 0];
+  let result = [0, 0, 0];
 
-  for (var i = 0; i < 3; i++) {
-    for (var j = 0; j < 3; j++) {
+  for (let i = 0; i < 3; i++) {
+    for (let j = 0; j < 3; j++) {
       result[i] += vec[j]*mat[i][j];
     }
   }

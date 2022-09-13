@@ -2,15 +2,15 @@
 // Main loop.
 //
 function render() {
-  for (var x = -canvas.width/2; x < canvas.width/2; x++) {
-    for (var y = -canvas.height/2; y < canvas.height/2; y++) {
+  for (let x = -canvas.width/2; x < canvas.width/2; x++) {
+    for (let y = -canvas.height/2; y < canvas.height/2; y++) {
       if (random() < 0.5) {
         continue;
       }
 
-      var direction = CanvasToViewport([x, y])
+      let direction = CanvasToViewport([x, y])
       direction = MultiplyMV(camera_rotation, direction);
-      var color = TraceRay(camera_position, direction, minRenderDistance, maxRenderDistance, recursion_depth);
+      let color = TraceRay(camera_position, direction, minRenderDistance, maxRenderDistance, recursion_depth);
       PutPixel(x, y, Clamp(color));
     }
   }
@@ -48,16 +48,16 @@ let playerHeal = 0.05; // gives you after kill
 let playerDamage = 0.25;
 let score = 0;
 
-var boxes = [
-  new Box([-5000, -2, -5000], [5000, -1, 5000], [255, 255, 255], 1000, 0.1, false), // ground
+let boxes = [
+  new Box([-5000, -2, -5000], [5000, -1, 5000], wallColor, wallSpec, wallRefl, false), // ground
   playerBox
   // new Box([0 + 1, -0.5, 2], [0.25 + 1, -0.3, 2.25], [255, 0, 0], 500, 0, false, () => { console.log('on pickup action'); }), // item
 ];
 
-var walls = [];
+let walls = [];
 let wallSize = 2;
 
-var lights = [
+let lights = [
   new Light(Light.AMBIENT, 0.2),
   playerLight1,
   // playerLight2,
@@ -65,18 +65,18 @@ var lights = [
 ];
 
 // Scene setup.
-var viewport_size = 1;
-var projection_plane_z = 1;
-var camera_position = [0, 0, 0];
-var camera_rotation = [[1, 0, 0],
+let viewport_size = 1;
+let projection_plane_z = 1;
+let camera_position = [0, 0, 0];
+let camera_rotation = [[1, 0, 0],
                        [0, 1, 0],
                        [0, 0, 1]];
 
-var recursion_depth = 2;
-var minRenderDistance = 1;
-var maxRenderDistance = 50;
+let recursion_depth = 2;
+let minRenderDistance = 1;
+let maxRenderDistance = 50;
 
-var fogColor = [220, 220, 220];
+let fogColor = [220, 220, 220];
 
 generateMap();
 

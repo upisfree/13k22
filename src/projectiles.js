@@ -33,7 +33,7 @@ function updateProj(p) {
   p.pos[1] = -0.1;
   p.box.moveProj(p.pos);
 
-  let targets = [playerBox, ...npcs];
+  let targets = [playerBox, ...npcs, ...walls];
 
   targets.some((target, index) => {
     if (index === 0) {
@@ -44,15 +44,22 @@ function updateProj(p) {
 
         console.log('player health', playerHealth);
 
-        removeProj(p);
+        removeProj(p, true);
 
         if (playerHealth <= 0) {
           death();
         }
       }
     } else {
+      // wall
+      if (!target.box && isCollision(target, p.box) && target.isWall) {
+        removeProj(p, true);
+
+        return;
+      }
+
       // npc
-      if (isCollision(target.box, p.box) && p.author !== target) { // нет самострелу
+      if (target.box && isCollision(target.box, p.box) && p.author !== target) { // нет самострелу
         target.health -= playerDamage;
 
         console.log('npc health', target.health);
@@ -66,7 +73,7 @@ function updateProj(p) {
           }
         }
 
-        removeProj(p);
+        removeProj(p, true);
       }
     }
   });
@@ -74,11 +81,8 @@ function updateProj(p) {
   removeProj(p);
 }
 
-// мб сделать полноценные коллизии? или слишком медленно будет? проверим с игроками?
-function removeProj(p) {
-  // check bounds
-  // много символов?
-  if (p.pos[0] > 30 || p.pos[0] < -30 || p.pos[2] > 30 || p.pos[2] < -30) {
+function removeProj(p, force = false) {
+  if (force || p.pos[0] > 30 || p.pos[0] < -30 || p.pos[2] > 30 || p.pos[2] < -30) {
     projectiles = projectiles.filter(pr => pr !== p);
     boxes = boxes.filter(pr => pr !== p.box);
   }

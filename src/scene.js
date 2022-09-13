@@ -1,4 +1,4 @@
-var Box = function(min, max, color, specular, reflective, collider = true, onCollide = null) {
+let Box = function(min, max, color, specular, reflective, collider = true, onCollide = null) {
   this.min = min;
   this.max = max;
 
@@ -37,7 +37,7 @@ Box.prototype.moveProj = function(pos) {
 };
 
 // A Light.
-var Light = function(ltype, intensity, position) {
+let Light = function(ltype, intensity, position) {
   this.ltype = ltype;
   this.intensity = intensity;
   this.position = position;

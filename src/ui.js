@@ -1,7 +1,7 @@
 function printText(text, fontSize, color, x, y, italic = true) {
-  canvas_context.font = ((italic) ? 'italic ' : '') + fontSize + 'px sans-serif';
-  canvas_context.fillStyle = color;
-  canvas_context.fillText(text, x, y);
+  gl.font = ((italic) ? 'italic ' : '') + fontSize + 'px sans-serif';
+  gl.fillStyle = color;
+  gl.fillText(text, x, y);
 }
 
 function printShadowedText(text, fontSize, x, y, italic = true) {
@@ -10,16 +10,17 @@ function printShadowedText(text, fontSize, x, y, italic = true) {
 }
 
 function printBackgroundedText(text, fontSize, textColor, backgroundColor, x, y, w, h) {
-  // canvas_context.font = 'small-caps bold italic ' + fontSize + 'px sans-serif';
-  canvas_context.font = 'italic ' + fontSize + 'px sans-serif';
-  canvas_context.fillStyle = backgroundColor;
-  canvas_context.fillRect(x - fontSize / 4, y - fontSize + 2, text.length * fontSize / 2 + 2, fontSize);
-  // canvas_context.fillRect(x, y, w, h);
-  canvas_context.fillStyle = textColor;
-  canvas_context.fillText(text, x, y);
+  // gl.font = 'small-caps bold italic ' + fontSize + 'px sans-serif';
+  gl.font = 'italic ' + fontSize + 'px sans-serif';
+  gl.fillStyle = backgroundColor;
+  gl.fillRect(x - fontSize / 4, y - fontSize + 2, text.length * fontSize / 2 + 2, fontSize);
+  // gl.fillRect(x, y, w, h);
+  gl.fillStyle = textColor;
+  gl.fillText(text, x, y);
 }
 
 function renderUI() {
+  // health
   printShadowedText('❤️', 7, 4, 11, false);
   printShadowedText(
     `${round(playerHealth * 100)}` // .toString()
@@ -30,4 +31,8 @@ function renderUI() {
     12,
     true
   );
+
+  // kills
+  printShadowedText('💀', 7, 4, 23, false);
+  printShadowedText(score,10,16,24,true);
 }

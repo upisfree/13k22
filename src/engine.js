@@ -13,14 +13,14 @@ function getBackgroundColor() {
   return fogColor;
 }
 
-var canvas = document.getElementById("canvas");
-var canvas_context = canvas.getContext("2d");
-var canvas_buffer = canvas_context.getImageData(0, 0, canvas.width, canvas.height);
-var canvas_pitch = canvas_buffer.width * 4;
+let canvas = document.getElementById("canvas");
+let gl = canvas.getContext("2d");
+let canvas_buffer = gl.getImageData(0, 0, canvas.width, canvas.height);
+let canvas_pitch = canvas_buffer.width * 4;
 
 
 // The PutPixel() function.
-var PutPixel = function(x, y, color) {
+let PutPixel = function(x, y, color) {
   x = canvas.width/2 + x;
   y = canvas.height/2 - y - 1;
 
@@ -28,7 +28,7 @@ var PutPixel = function(x, y, color) {
     return;
   }
 
-  var offset = 4 * x + canvas_pitch * y;
+  let offset = 4 * x + canvas_pitch * y;
   canvas_buffer.data[offset++] = color[0];
   canvas_buffer.data[offset++] = color[1];
   canvas_buffer.data[offset++] = color[2];
@@ -37,8 +37,8 @@ var PutPixel = function(x, y, color) {
 
 
 // Displays the contents of the offscreen buffer into the canvas.
-var UpdateCanvas = function() {
-  canvas_context.putImageData(canvas_buffer, 0, 0);
+let UpdateCanvas = function() {
+  gl.putImageData(canvas_buffer, 0, 0);
 }
 
 // ======================================================================
@@ -47,13 +47,13 @@ var UpdateCanvas = function() {
 // ======================================================================
 
 // Converts 2D canvas coordinates to 3D viewport coordinates.
-var CanvasToViewport = function(p2d) {
+let CanvasToViewport = function(p2d) {
   return [p2d[0] * viewport_size / canvas.width,
       p2d[1] * viewport_size / canvas.height,
       projection_plane_z];
 }
 
-var IntersectRayBox = function(origin, direction, box) {
+let IntersectRayBox = function(origin, direction, box) {
   let tmin, tmax, tymin, tymax, tzmin, tzmax;
   let bounds = box.bounds;
 
@@ -107,18 +107,18 @@ var IntersectRayBox = function(origin, direction, box) {
   return tmin;
 }
 
-var ComputeLighting = function(point, normal, view, specular, isWall) {
-  var intensity = 0;
-  var length_n = Length(normal);  // Should be 1.0, but just in case...
-  var length_v = Length(view);
+let ComputeLighting = function(point, normal, view, specular, isWall) {
+  let intensity = 0;
+  let length_n = Length(normal);  // Should be 1.0, but just in case...
+  let length_v = Length(view);
 
-  for (var i = 0; i < lights.length; i++) {
-    var light = lights[i];
+  for (let i = 0; i < lights.length; i++) {
+    let light = lights[i];
 
     if (light.ltype == Light.AMBIENT) {
       intensity += light.intensity;
     } else {
-      var vec_l, t_max;
+      let vec_l, t_max;
 
       if (light.ltype == Light.POINT) {
         vec_l = Subtract(light.position, point);
@@ -130,22 +130,22 @@ var ComputeLighting = function(point, normal, view, specular, isWall) {
 
       // Shadow check.
       if (!isWall) {
-        var blocker = ClosestIntersection(point, vec_l, EPSILON, t_max);
+        let blocker = ClosestIntersection(point, vec_l, EPSILON, t_max);
         if (blocker) {
           continue;
         }
       }
 
       // Diffuse reflection.
-      var n_dot_l = DotProduct(normal, vec_l);
+      let n_dot_l = DotProduct(normal, vec_l);
       if (n_dot_l > 0) {
         intensity += light.intensity * n_dot_l / (length_n * Length(vec_l));
       }
 
       // Specular reflection.
       if (specular != -1) {
-        var vec_r = ReflectRay(vec_l, normal);
-        var r_dot_v = DotProduct(vec_r, view);
+        let vec_r = ReflectRay(vec_l, normal);
+        let r_dot_v = DotProduct(vec_r, view);
         if (r_dot_v > 0) {
           intensity += light.intensity * pow(r_dot_v / (Length(vec_r) * length_v), specular);
         }
@@ -158,12 +158,12 @@ var ComputeLighting = function(point, normal, view, specular, isWall) {
 
 
 // Find the closest intersection between a ray and the spheres in the scene.
-var ClosestIntersection = function(origin, direction, min_t, max_t) {
-  var closest_t = Infinity;
-  var closest_object = null;
+let ClosestIntersection = function(origin, direction, min_t, max_t) {
+  let closest_t = Infinity;
+  let closest_object = null;
 
-  for (var i = 0; i < boxes.length; i++) {
-    var ts = IntersectRayBox(origin, direction, boxes[i]);
+  for (let i = 0; i < boxes.length; i++) {
+    let ts = IntersectRayBox(origin, direction, boxes[i]);
 
     if (ts < closest_t && min_t < ts && ts < max_t) {
       closest_t = ts;
@@ -179,7 +179,7 @@ var ClosestIntersection = function(origin, direction, min_t, max_t) {
   return null;
 }
 
-var NormalBox = function(point, box) {
+let NormalBox = function(point, box) {
   let pc = Subtract(point, box.center);
 
   let normal = [
@@ -192,24 +192,24 @@ var NormalBox = function(point, box) {
 }
 
 // Traces a ray against the set of spheres in the scene.
-var TraceRay = function(origin, direction, min_t, max_t, depth) {
-  var intersection = ClosestIntersection(origin, direction, min_t, max_t);
+let TraceRay = function(origin, direction, min_t, max_t, depth) {
+  let intersection = ClosestIntersection(origin, direction, min_t, max_t);
 
   if (!intersection) {
     return getBackgroundColor();
   }
 
-  var closest_object = intersection[0];
-  var closest_t = intersection[1];
+  let closest_object = intersection[0];
+  let closest_t = intersection[1];
 
-  var point = Add(origin, MultiplySV(closest_t, direction));
+  let point = Add(origin, MultiplySV(closest_t, direction));
 
-  var normal = NormalBox(point, closest_object);
-  var isWall = walls.includes(closest_object);
+  let normal = NormalBox(point, closest_object);
+  let isWall = walls.includes(closest_object);
 
-  var view = MultiplySV(-1, direction);
-  var lighting = ComputeLighting(point, normal, view, closest_object.specular, isWall);
-  var local_color = MultiplySV(lighting, closest_object.color);
+  let view = MultiplySV(-1, direction);
+  let lighting = ComputeLighting(point, normal, view, closest_object.specular, isWall);
+  let local_color = MultiplySV(lighting, closest_object.color);
 
   if (closest_object.reflective <= 0 || depth <= 0) {
     return local_color;
