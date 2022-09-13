@@ -1,9 +1,9 @@
 let npcs = [];
-let npcSpeed = 0.1;
+let npcSpeed = 0.11;
 let npcProjSpeed = 0.1;
 let npcProjDamage = 0.05;
-let npcFireRate = 0.003;
-let npcSpawnChance = 0.005;
+let npcFireRate = 0.0035;
+let npcSpawnChance = 0.006;
 let npcDespawnTime = 60000;
 
 function getPos() {
@@ -17,7 +17,7 @@ function getPos() {
 }
 
 function newNPC() {
-  let color = [0, 255 * random(), 255 * random()];
+  let color = [128 * random(), 255 * random(), 255 * random()];
 
   let n = {
     pos: getPos(),
@@ -33,7 +33,6 @@ function newNPC() {
 
 // не нужно?
 function onNPCAndPlayerCollide() {
-  console.log(this, arguments);
 }
 
 function updateNPCs() {

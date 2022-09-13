@@ -50,10 +50,14 @@ function start() {
   startAudio();
 
   loop();
+
+  setTimeout(() => {
+    npcSpawnChance = 0.008;
+  }, 60000);
 }
 
-let playerBox = new Box([0, -0.9, 0], [1, 1, 1], [0, 0, 255], 500, 0, false);
-let playerLight1 = new Light(Light.POINT, 0.6, [0, 0, 1.2]);
+let playerBox = new Box([0, -0.9, 0], [1, 1, 1], [0, 128, 255], 500, 0, false);
+let playerLight1 = new Light(Light.POINT, 0.7, [0, 0, 1.2]);
 let playerHealth = 1;
 let playerHeal = 0.05; // gives you after kill
 let playerDamage = 0.25;
