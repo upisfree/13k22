@@ -1,5 +1,5 @@
 # DEATH DEATH DEATH
-## [Play here](http://upisfr.ee/game/13k22/)
+## [Play here](https://upisfr.ee/game/13k22/)
 Controls: WASD + mouse
 
 This is a shooter with real-time raytracing that fits in only 7kb.
