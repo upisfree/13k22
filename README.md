@@ -13,5 +13,7 @@ The game itself was done in 2 days, raytracing engine was done in 3 really lazy 
 
 This [article](https://www.gabrielgambetta.com/computer-graphics-from-scratch/00-introduction.html) helped a lot with raytracing implementation.
 
+Do not really looked in the code, it was written in real rush and I thought I will refactor it to fit in 13kb, but when I just minified and zipped it, I found that it fits in 7kb and didn't do anything to refactor it, haha :) 
+
 ### Gameplay video
 [![7kb game by Senya Pugach](https://i.ytimg.com/vi/FrYP45gaH_g/hqdefault.jpg)](https://youtu.be/FrYP45gaH_g "DEATH DEATH DEATH")
